@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora de Matrizes</title>
+  </head>
+  <body>
+    <div id="aviso" class="aviso" role="alert" aria-live="assertive"></div>
+
+    <main class="app-container">
+      <header class="page-header">
+        <h1>Calculadora de Matrizes</h1>
+        <p>Realize operações básicas entre matrizes de forma simples.</p>
+      </header>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Dimensões</h2>
+        </div>
+
+        <div class="dimensoes">
+          <fieldset class="dimension-group">
+            <legend>Matriz A</legend>
+
+            <div class="field-row">
+              <label for="linhas-a">Linhas</label>
+              <input id="linhas-a" type="number" min="1" value="2" />
+            </div>
+
+            <div class="field-row">
+              <label for="colunas-a">Colunas</label>
+              <input id="colunas-a" type="number" min="1" value="2" />
+            </div>
+          </fieldset>
+
+          <fieldset class="dimension-group">
+            <legend>Matriz B</legend>
+
+            <div class="field-row">
+              <label for="linhas-b">Linhas</label>
+              <input id="linhas-b" type="number" min="1" value="2" />
+            </div>
+
+            <div class="field-row">
+              <label for="colunas-b">Colunas</label>
+              <input id="colunas-b" type="number" min="1" value="2" />
+            </div>
+          </fieldset>
+        </div>
+
+        <button id="gerar-matrizes" class="button button-primary" type="button">
+          Gerar matrizes
+        </button>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Matrizes</h2>
+        </div>
+
+        <div class="matrizes">
+          <div class="matrix-panel">
+            <h3>Matriz A</h3>
+            <div class="matrix-scroll">
+              <div id="matriz-a"></div>
+            </div>
+          </div>
+
+          <div class="matrix-panel">
+            <h3>Matriz B</h3>
+            <div class="matrix-scroll">
+              <div id="matriz-b"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-header">
+          <h2>Operações</h2>
+        </div>
+
+        <div class="field-row scalar-field">
+          <label for="escalar">Escalar (k)</label>
+          <input id="escalar" type="number" value="1" />
+        </div>
+
+        <div class="botoes">
+          <button id="somar" class="button button-action" type="button">Somar</button>
+          <button id="subtrair" class="button button-action" type="button">Subtrair</button>
+          <button id="multiplicar-escalar" class="button button-action" type="button">
+            Multiplicar por escalar
+          </button>
+          <button id="multiplicar-matrizes" class="button button-action" type="button">
+            Multiplicar matrizes
+          </button>
+          <button id="limpar" class="button button-clear" type="button">Limpar</button>
+        </div>
+      </section>
+
+      <section class="card result-card">
+        <div class="card-header">
+          <h2>Resultado</h2>
+        </div>
+
+        <p id="mensagem-erro" class="erro"></p>
+
+        <div class="matrix-scroll">
+          <div id="resultado"></div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
