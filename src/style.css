@@ -49,6 +49,8 @@
   --theme-icon-active: #0f172a;
   --theme-icon-muted: #667085;
   --theme-sun-ray: #f59e0b;
+  --brand-glow: rgba(37, 99, 235, 0.3);
+  --brand-glow-strong: rgba(59, 130, 246, 0.46);
 
   font-family: Arial, Helvetica, system-ui, sans-serif;
   color: var(--text);
@@ -107,6 +109,8 @@
   --theme-icon-active: #0b1220;
   --theme-icon-muted: #d2dae5;
   --theme-sun-ray: #fbbf24;
+  --brand-glow: rgba(96, 165, 250, 0.42);
+  --brand-glow-strong: rgba(125, 211, 252, 0.62);
 
   color-scheme: dark;
 }
@@ -137,6 +141,35 @@ body {
   justify-content: space-between;
   gap: 18px;
   margin-bottom: 24px;
+}
+
+.brand-header {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 18px;
+  animation: aparecerLogo 420ms ease both;
+}
+
+.brand-logo {
+  width: clamp(170px, 22vw, 260px);
+  max-height: 86px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px var(--brand-glow));
+  transition:
+    filter 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.brand-logo:not([src]) {
+  visibility: hidden;
+}
+
+.brand-logo:hover {
+  filter: drop-shadow(0 0 18px var(--brand-glow-strong));
+  transform: translateY(-2px) scale(1.015);
 }
 
 .header-copy {
@@ -303,6 +336,9 @@ body {
   font-size: 14px;
   font-weight: 700;
   line-height: 1.4;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
 }
 
 .observacao-dimensoes:not(:empty) {
@@ -698,6 +734,9 @@ input:focus {
 
 .context-help-actions {
   margin: 10px 0 16px;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
 }
 
 .context-help-actions[hidden] {
@@ -708,6 +747,9 @@ input:focus {
   body,
   .card,
   input,
+  .erro,
+  .observacao-dimensoes,
+  .context-help-actions,
   .theme-switch,
   .theme-switch-track,
   .theme-switch-knob,
@@ -1180,10 +1222,20 @@ input:focus {
   background: var(--danger-bg);
   color: var(--danger);
   font-weight: 700;
+  transition:
+    opacity 260ms ease,
+    transform 260ms ease;
 }
 
 .erro:not(:empty) {
   display: block;
+}
+
+.erro.mensagem-saindo,
+.observacao-dimensoes.mensagem-saindo,
+.context-help-actions.mensagem-saindo {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 .aviso {
@@ -1272,18 +1324,44 @@ input:focus {
   }
 }
 
+@keyframes aparecerLogo {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (max-width: 760px) {
   .app-container {
     width: min(100% - 20px, 1120px);
     padding: 20px 0;
   }
 
-  .page-header h1 {
-    font-size: 28px;
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
   }
 
-  .page-header {
+  .brand-header {
+    width: 100%;
+    flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+  }
+
+  .brand-logo {
+    width: min(100%, 230px);
+    max-height: 76px;
+  }
+
+  .page-header h1 {
+    font-size: 28px;
   }
 
   .card {

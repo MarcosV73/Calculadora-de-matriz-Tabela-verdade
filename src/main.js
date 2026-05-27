@@ -1,52 +1,63 @@
 import './style.css'
+import logoMathLogicUrl from './assets/logo/mathlogic-logo.png'
+import faviconMathLogicUrl from './assets/logo/mathlogic-favicon.svg'
+import faviconMathLogicPngUrl from './assets/logo/mathlogic-favicon.png'
 
-const linhasAInput = document.querySelector('#linhas-a')
-const colunasAInput = document.querySelector('#colunas-a')
-const linhasBInput = document.querySelector('#linhas-b')
-const colunasBInput = document.querySelector('#colunas-b')
-const escalarInput = document.querySelector('#escalar')
+const selecionar = (seletor) => document.querySelector(seletor)
+const selecionarTodos = (seletor) => document.querySelectorAll(seletor)
 
-const matrizAContainer = document.querySelector('#matriz-a')
-const matrizBContainer = document.querySelector('#matriz-b')
-const resultadoContainer = document.querySelector('#resultado')
-const mensagemErro = document.querySelector('#mensagem-erro')
-const observacaoDimensoes = document.querySelector('#observacao-dimensoes')
-const aviso = document.querySelector('#aviso')
-const temaEscuroInput = document.querySelector('#tema-escuro')
-const tituloPagina = document.querySelector('#titulo-pagina')
-const subtituloPagina = document.querySelector('#subtitulo-pagina')
-const paginas = document.querySelectorAll('.app-page')
-const linksPagina = document.querySelectorAll('[data-page-link]')
+const linhasAInput = selecionar('#linhas-a')
+const colunasAInput = selecionar('#colunas-a')
+const linhasBInput = selecionar('#linhas-b')
+const colunasBInput = selecionar('#colunas-b')
+const escalarInput = selecionar('#escalar')
 
-const gerarMatrizesButton = document.querySelector('#gerar-matrizes')
-const somarButton = document.querySelector('#somar')
-const subtrairButton = document.querySelector('#subtrair')
-const multiplicarEscalarButton = document.querySelector('#multiplicar-escalar')
-const multiplicarMatrizesButton = document.querySelector('#multiplicar-matrizes')
-const limparButton = document.querySelector('#limpar')
-const ajudaMatrizesButton = document.querySelector('#ajuda-matrizes')
-const acoesObservacaoMatrizes = document.querySelector('#acoes-observacao-matrizes')
-const saberMaisObservacaoMatrizesButton = document.querySelector('#saber-mais-observacao-matrizes')
-const acoesErroMatrizes = document.querySelector('#acoes-erro-matrizes')
-const saberMaisErroMatrizesButton = document.querySelector('#saber-mais-erro-matrizes')
-const ajudaMatrizesModal = document.querySelector('#ajuda-matrizes-modal')
-const fecharAjudaMatrizesButton = document.querySelector('#fechar-ajuda-matrizes')
-const ajudaMatrizesTitulo = document.querySelector('#ajuda-matrizes-titulo')
-const ajudaMatrizesSubtitulo = document.querySelector('#ajuda-matrizes-subtitulo')
-const ajudaMatrizesConteudo = document.querySelector('#ajuda-matrizes-conteudo')
-const proposicaoInput = document.querySelector('#proposicao-logica')
-const gerarTabelaButton = document.querySelector('#gerar-tabela')
-const limparTabelaButton = document.querySelector('#limpar-tabela')
-const ajudaTabelaButton = document.querySelector('#ajuda-tabela')
-const ajudaModal = document.querySelector('#ajuda-modal')
-const fecharAjudaButton = document.querySelector('#fechar-ajuda')
-const mensagemTabela = document.querySelector('#mensagem-tabela')
-const resumoTabela = document.querySelector('#resumo-tabela')
-const totalLinhasTabela = document.querySelector('#total-linhas-tabela')
-const totalColunasTabela = document.querySelector('#total-colunas-tabela')
-const variaveisTabela = document.querySelector('#variaveis-tabela')
-const tabelaVerdadeResultado = document.querySelector('#tabela-verdade-resultado')
+const matrizAContainer = selecionar('#matriz-a')
+const matrizBContainer = selecionar('#matriz-b')
+const resultadoContainer = selecionar('#resultado')
+const mensagemErro = selecionar('#mensagem-erro')
+const observacaoDimensoes = selecionar('#observacao-dimensoes')
+const aviso = selecionar('#aviso')
+const favicon = selecionar('#favicon')
+const faviconPng = selecionar('#favicon-png')
+const mathlogicLogo = selecionar('#mathlogic-logo')
+const temaEscuroInput = selecionar('#tema-escuro')
+const tituloPagina = selecionar('#titulo-pagina')
+const subtituloPagina = selecionar('#subtitulo-pagina')
+const paginas = selecionarTodos('.app-page')
+const linksPagina = selecionarTodos('[data-page-link]')
+
+const gerarMatrizesButton = selecionar('#gerar-matrizes')
+const somarButton = selecionar('#somar')
+const subtrairButton = selecionar('#subtrair')
+const multiplicarEscalarButton = selecionar('#multiplicar-escalar')
+const multiplicarMatrizesButton = selecionar('#multiplicar-matrizes')
+const limparButton = selecionar('#limpar')
+const ajudaMatrizesButton = selecionar('#ajuda-matrizes')
+const acoesObservacaoMatrizes = selecionar('#acoes-observacao-matrizes')
+const saberMaisObservacaoMatrizesButton = selecionar('#saber-mais-observacao-matrizes')
+const acoesErroMatrizes = selecionar('#acoes-erro-matrizes')
+const saberMaisErroMatrizesButton = selecionar('#saber-mais-erro-matrizes')
+const ajudaMatrizesModal = selecionar('#ajuda-matrizes-modal')
+const fecharAjudaMatrizesButton = selecionar('#fechar-ajuda-matrizes')
+const ajudaMatrizesTitulo = selecionar('#ajuda-matrizes-titulo')
+const ajudaMatrizesSubtitulo = selecionar('#ajuda-matrizes-subtitulo')
+const ajudaMatrizesConteudo = selecionar('#ajuda-matrizes-conteudo')
+const proposicaoInput = selecionar('#proposicao-logica')
+const gerarTabelaButton = selecionar('#gerar-tabela')
+const limparTabelaButton = selecionar('#limpar-tabela')
+const ajudaTabelaButton = selecionar('#ajuda-tabela')
+const ajudaModal = selecionar('#ajuda-modal')
+const fecharAjudaButton = selecionar('#fechar-ajuda')
+const mensagemTabela = selecionar('#mensagem-tabela')
+const resumoTabela = selecionar('#resumo-tabela')
+const totalLinhasTabela = selecionar('#total-linhas-tabela')
+const totalColunasTabela = selecionar('#total-colunas-tabela')
+const variaveisTabela = selecionar('#variaveis-tabela')
+const tabelaVerdadeResultado = selecionar('#tabela-verdade-resultado')
 const TEMA_STORAGE_KEY = 'calculadora-matrizes-tema'
+const TEMPO_MENSAGEM_ERRO = 5500
+const TEMPO_SAIDA_MENSAGEM = 260
 const paginasInfo = {
   home: {
     titulo: 'Central de Cálculos',
@@ -64,10 +75,58 @@ const paginasInfo = {
 
 let avisoTimer = null
 let avisoSaidaTimer = null
-let ajudaMatrizesModalTimer = null
-let ajudaModalTimer = null
+const mensagemTimers = {}
+const modalTimers = {}
 let audioContext = null
 let contextoAjudaMatrizes = 'geral'
+
+function carregarIdentidadeVisual() {
+  favicon.href = faviconMathLogicUrl
+  faviconPng.href = faviconMathLogicPngUrl
+  mathlogicLogo.src = logoMathLogicUrl
+}
+
+function cancelarMensagemTemporaria(chave, elemento, acao = null) {
+  const timers = mensagemTimers[chave]
+
+  if (timers) {
+    clearTimeout(timers.timer)
+    clearTimeout(timers.saidaTimer)
+    delete mensagemTimers[chave]
+  }
+
+  elemento.classList.remove('mensagem-saindo')
+
+  if (acao) {
+    acao.classList.remove('mensagem-saindo')
+  }
+}
+
+function agendarMensagemTemporaria(chave, elemento, limpar, acao = null) {
+  cancelarMensagemTemporaria(chave, elemento, acao)
+
+  mensagemTimers[chave] = {
+    timer: setTimeout(() => {
+      elemento.classList.add('mensagem-saindo')
+
+      if (acao && !acao.hidden) {
+        acao.classList.add('mensagem-saindo')
+      }
+
+      mensagemTimers[chave].saidaTimer = setTimeout(() => {
+        limpar()
+        elemento.classList.remove('mensagem-saindo')
+
+        if (acao) {
+          acao.classList.remove('mensagem-saindo')
+        }
+
+        delete mensagemTimers[chave]
+      }, TEMPO_SAIDA_MENSAGEM)
+    }, TEMPO_MENSAGEM_ERRO),
+    saidaTimer: null,
+  }
+}
 
 function obterTemaSalvo() {
   try {
@@ -242,7 +301,7 @@ function exibirAviso(mensagem, tipo = 'erro') {
 
   avisoTimer = setTimeout(() => {
     esconderAviso()
-  }, 3000)
+  }, tipo === 'erro' ? TEMPO_MENSAGEM_ERRO : 3000)
 }
 
 function mostrarAviso(mensagem, tipo = 'erro') {
@@ -393,7 +452,19 @@ function atualizarAcaoErroMatrizes(contexto) {
   }
 }
 
+function limparObservacaoDimensoes() {
+  observacaoDimensoes.textContent = ''
+  observacaoDimensoes.classList.remove('observacao-dimensoes-alerta')
+  observacaoDimensoes.classList.remove('observacao-dimensoes-sucesso')
+  atualizarAcaoObservacaoMatrizes('')
+}
+
 function definirObservacaoDimensoes(mensagem, temOperacaoIndisponivel = true) {
+  cancelarMensagemTemporaria(
+    'observacao-dimensoes',
+    observacaoDimensoes,
+    acoesObservacaoMatrizes,
+  )
   observacaoDimensoes.textContent = mensagem
   observacaoDimensoes.classList.remove('observacao-dimensoes-alerta')
   observacaoDimensoes.classList.remove('observacao-dimensoes-sucesso')
@@ -405,6 +476,12 @@ function definirObservacaoDimensoes(mensagem, temOperacaoIndisponivel = true) {
 
   if (temOperacaoIndisponivel) {
     observacaoDimensoes.classList.add('observacao-dimensoes-alerta')
+    agendarMensagemTemporaria(
+      'observacao-dimensoes',
+      observacaoDimensoes,
+      limparObservacaoDimensoes,
+      acoesObservacaoMatrizes,
+    )
     return
   }
 
@@ -480,91 +557,144 @@ function criarBlocoExemplosMatrizes() {
   `
 }
 
-function obterConteudoAjudaMatrizes(contexto) {
-  const dimensoesAtuais = criarTextoDimensoesAtuais()
+function criarAjudaMatrizes(titulo, subtitulo, conteudo) {
+  return { titulo, subtitulo, conteudo }
+}
 
-  const secoes = {
-    geral: {
-      titulo: 'Ajuda da Calculadora de Matrizes',
-      subtitulo: 'Entenda o que é uma matriz e quais regras cada operação precisa seguir.',
-      conteudo: `
-        <section class="help-notes">
-          <h3>O que é uma matriz</h3>
-          <p>Uma matriz é uma tabela de números organizada em linhas e colunas. A dimensão 2x3, por exemplo, significa 2 linhas e 3 colunas.</p>
-        </section>
+function criarSecaoAjuda(titulo, texto) {
+  return `
+    <section class="help-notes">
+      <h3>${titulo}</h3>
+      <p>${texto}</p>
+    </section>
+  `
+}
+
+function criarListaRegras(itens, compacta = false) {
+  const classe = compacta ? 'rule-list compact' : 'rule-list'
+  const regras = itens
+    .map((item) => `<div><strong>${item.titulo}</strong><span>${item.texto}</span></div>`)
+    .join('')
+
+  return `<div class="${classe}">${regras}</div>`
+}
+
+function criarConteudosAjudaMatrizes(dimensoesAtuais) {
+  return {
+    geral: criarAjudaMatrizes(
+      'Ajuda da Calculadora de Matrizes',
+      'Entenda o que é uma matriz e quais regras cada operação precisa seguir.',
+      `
+        ${criarSecaoAjuda(
+          'O que é uma matriz',
+          'Uma matriz é uma tabela de números organizada em linhas e colunas. A dimensão 2x3, por exemplo, significa 2 linhas e 3 colunas.',
+        )}
         <section class="help-notes">
           <h3>Regras das operações</h3>
-          <div class="rule-list">
-            <div><strong>Soma</strong><span>As duas matrizes precisam ter exatamente as mesmas dimensões.</span></div>
-            <div><strong>Subtração</strong><span>Também exige o mesmo número de linhas e colunas.</span></div>
-            <div><strong>Multiplicação por escalar</strong><span>Sempre é possível: cada elemento é multiplicado pelo número escolhido.</span></div>
-            <div><strong>Multiplicação entre matrizes</strong><span>O número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.</span></div>
-          </div>
+          ${criarListaRegras([
+            {
+              titulo: 'Soma',
+              texto: 'As duas matrizes precisam ter exatamente as mesmas dimensões.',
+            },
+            {
+              titulo: 'Subtração',
+              texto: 'Também exige o mesmo número de linhas e colunas.',
+            },
+            {
+              titulo: 'Multiplicação por escalar',
+              texto: 'Sempre é possível: cada elemento é multiplicado pelo número escolhido.',
+            },
+            {
+              titulo: 'Multiplicação entre matrizes',
+              texto: 'O número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.',
+            },
+          ])}
         </section>
         ${criarBlocoExemplosMatrizes()}
       `,
-    },
-    'soma-subtracao': {
-      titulo: 'Por que não dá para somar ou subtrair?',
-      subtitulo: dimensoesAtuais,
-      conteudo: `
-        <section class="help-notes">
-          <h3>Regra da soma e da subtração</h3>
-          <p>Para somar ou subtrair matrizes, elas precisam ter exatamente o mesmo número de linhas e colunas. Cada posição da Matriz A é combinada com a mesma posição da Matriz B.</p>
-        </section>
-        <div class="rule-list compact">
-          <div><strong>2x3 + 2x3</strong><span>Possível, porque as dimensões são iguais.</span></div>
-          <div><strong>2x3 + 3x2</strong><span>Impossível, porque as dimensões são diferentes.</span></div>
-        </div>
+    ),
+    'soma-subtracao': criarAjudaMatrizes(
+      'Por que não dá para somar ou subtrair?',
+      dimensoesAtuais,
+      `
+        ${criarSecaoAjuda(
+          'Regra da soma e da subtração',
+          'Para somar ou subtrair matrizes, elas precisam ter exatamente o mesmo número de linhas e colunas. Cada posição da Matriz A é combinada com a mesma posição da Matriz B.',
+        )}
+        ${criarListaRegras(
+          [
+            {
+              titulo: '2x3 + 2x3',
+              texto: 'Possível, porque as dimensões são iguais.',
+            },
+            {
+              titulo: '2x3 + 3x2',
+              texto: 'Impossível, porque as dimensões são diferentes.',
+            },
+          ],
+          true,
+        )}
       `,
-    },
-    soma: {
-      titulo: 'Por que essa soma não funciona?',
-      subtitulo: dimensoesAtuais,
-      conteudo: `
-        <section class="help-notes">
-          <h3>Regra da soma</h3>
-          <p>A soma só existe quando as duas matrizes têm as mesmas dimensões. Corrija as linhas e colunas para que Matriz A e Matriz B fiquem iguais.</p>
-        </section>
+    ),
+    soma: criarAjudaMatrizes(
+      'Por que essa soma não funciona?',
+      dimensoesAtuais,
+      `
+        ${criarSecaoAjuda(
+          'Regra da soma',
+          'A soma só existe quando as duas matrizes têm as mesmas dimensões. Corrija as linhas e colunas para que Matriz A e Matriz B fiquem iguais.',
+        )}
         ${criarBlocoExemplosMatrizes()}
       `,
-    },
-    subtracao: {
-      titulo: 'Por que essa subtração não funciona?',
-      subtitulo: dimensoesAtuais,
-      conteudo: `
-        <section class="help-notes">
-          <h3>Regra da subtração</h3>
-          <p>A subtração segue a mesma regra da soma: as matrizes precisam ter o mesmo número de linhas e colunas.</p>
-        </section>
-        <div class="rule-list compact">
-          <div><strong>2x2 - 2x2</strong><span>Possível.</span></div>
-          <div><strong>2x4 - 4x2</strong><span>Impossível.</span></div>
-        </div>
+    ),
+    subtracao: criarAjudaMatrizes(
+      'Por que essa subtração não funciona?',
+      dimensoesAtuais,
+      `
+        ${criarSecaoAjuda(
+          'Regra da subtração',
+          'A subtração segue a mesma regra da soma: as matrizes precisam ter o mesmo número de linhas e colunas.',
+        )}
+        ${criarListaRegras(
+          [
+            { titulo: '2x2 - 2x2', texto: 'Possível.' },
+            { titulo: '2x4 - 4x2', texto: 'Impossível.' },
+          ],
+          true,
+        )}
       `,
-    },
-    multiplicacao: {
-      titulo: 'Por que essa multiplicação não funciona?',
-      subtitulo: dimensoesAtuais,
-      conteudo: `
-        <section class="help-notes">
-          <h3>Regra da multiplicação entre matrizes</h3>
-          <p>Para multiplicar A × B, o número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.</p>
-        </section>
-        <div class="rule-list compact">
-          <div><strong>2x3 × 3x2</strong><span>Possível, porque 3 colunas em A combinam com 3 linhas em B.</span></div>
-          <div><strong>2x3 × 2x2</strong><span>Impossível, porque 3 é diferente de 2.</span></div>
-        </div>
+    ),
+    multiplicacao: criarAjudaMatrizes(
+      'Por que essa multiplicação não funciona?',
+      dimensoesAtuais,
+      `
+        ${criarSecaoAjuda(
+          'Regra da multiplicação entre matrizes',
+          'Para multiplicar A × B, o número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.',
+        )}
+        ${criarListaRegras(
+          [
+            {
+              titulo: '2x3 × 3x2',
+              texto: 'Possível, porque 3 colunas em A combinam com 3 linhas em B.',
+            },
+            {
+              titulo: '2x3 × 2x2',
+              texto: 'Impossível, porque 3 é diferente de 2.',
+            },
+          ],
+          true,
+        )}
       `,
-    },
-    escalar: {
-      titulo: 'Multiplicação por escalar',
-      subtitulo: 'Essa operação sempre é possível para qualquer matriz válida.',
-      conteudo: `
-        <section class="help-notes">
-          <h3>Como funciona</h3>
-          <p>Multiplicar por escalar significa multiplicar todos os elementos da matriz por um número real.</p>
-        </section>
+    ),
+    escalar: criarAjudaMatrizes(
+      'Multiplicação por escalar',
+      'Essa operação sempre é possível para qualquer matriz válida.',
+      `
+        ${criarSecaoAjuda(
+          'Como funciona',
+          'Multiplicar por escalar significa multiplicar todos os elementos da matriz por um número real.',
+        )}
         <div class="matrix-equation single">
           <span>2 ×</span>
           <span class="mini-matrix">1&nbsp;3<br />4&nbsp;5</span>
@@ -572,19 +702,23 @@ function obterConteudoAjudaMatrizes(contexto) {
           <span class="mini-matrix">2&nbsp;6<br />8&nbsp;10</span>
         </div>
       `,
-    },
-    regras: {
-      titulo: 'Quais regras falharam?',
-      subtitulo: dimensoesAtuais,
-      conteudo: `
-        <section class="help-notes">
-          <h3>As dimensões atuais bloqueiam mais de uma operação</h3>
-          <p>Para somar ou subtrair, as dimensões precisam ser iguais. Para multiplicar A × B, as colunas de A precisam coincidir com as linhas de B.</p>
-        </section>
+    ),
+    regras: criarAjudaMatrizes(
+      'Quais regras falharam?',
+      dimensoesAtuais,
+      `
+        ${criarSecaoAjuda(
+          'As dimensões atuais bloqueiam mais de uma operação',
+          'Para somar ou subtrair, as dimensões precisam ser iguais. Para multiplicar A × B, as colunas de A precisam coincidir com as linhas de B.',
+        )}
         ${criarBlocoExemplosMatrizes()}
       `,
-    },
+    ),
   }
+}
+
+function obterConteudoAjudaMatrizes(contexto) {
+  const secoes = criarConteudosAjudaMatrizes(criarTextoDimensoesAtuais())
 
   return secoes[contexto] || secoes.geral
 }
@@ -731,10 +865,15 @@ function multiplicarMatrizes(matrizA, matrizB) {
   return resultado
 }
 
-function renderizarResultado(matriz) {
+function limparErroMatriz() {
   mensagemErro.textContent = ''
-  resultadoContainer.innerHTML = ''
   atualizarAcaoErroMatrizes('')
+}
+
+function renderizarResultado(matriz) {
+  cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
+  limparErroMatriz()
+  resultadoContainer.innerHTML = ''
 
   const tabela = document.createElement('table')
   tabela.classList.add('matrix-grid', 'resultado-grid')
@@ -756,9 +895,11 @@ function renderizarResultado(matriz) {
 }
 
 function mostrarErro(mensagem, exibirPopup = true, contextoAjuda = '') {
+  cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
   resultadoContainer.innerHTML = ''
   mensagemErro.textContent = mensagem || 'Operação impossível'
   atualizarAcaoErroMatrizes(contextoAjuda)
+  agendarMensagemTemporaria('erro-matriz', mensagemErro, limparErroMatriz, acoesErroMatrizes)
 
   if (exibirPopup) {
     mostrarAviso(mensagem, 'erro')
@@ -769,9 +910,9 @@ function mostrarErro(mensagem, exibirPopup = true, contextoAjuda = '') {
 }
 
 function limparMensagemEResultado() {
-  mensagemErro.textContent = ''
+  cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
+  limparErroMatriz()
   resultadoContainer.innerHTML = ''
-  atualizarAcaoErroMatrizes('')
 }
 
 function possuemMesmasDimensoes(matrizA, matrizB) {
@@ -1178,8 +1319,13 @@ function criarCelulaValor(valor) {
   return celula
 }
 
-function renderizarTabelaVerdade(tabela) {
+function limparErroTabela() {
   mensagemTabela.textContent = ''
+}
+
+function renderizarTabelaVerdade(tabela) {
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
+  limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = false
   totalLinhasTabela.textContent = tabela.totalLinhas
@@ -1222,9 +1368,11 @@ function renderizarTabelaVerdade(tabela) {
 }
 
 function mostrarErroTabela(mensagem) {
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
   mensagemTabela.textContent = mensagem
+  agendarMensagemTemporaria('erro-tabela', mensagemTabela, limparErroTabela)
   mostrarAviso(mensagem)
 }
 
@@ -1245,7 +1393,8 @@ function executarTabelaVerdade() {
 
 function limparTabelaVerdade() {
   proposicaoInput.value = ''
-  mensagemTabela.textContent = ''
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
+  limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
   esconderAviso()
@@ -1259,54 +1408,54 @@ function renderizarAjudaMatrizes(contexto) {
   ajudaMatrizesConteudo.innerHTML = ajuda.conteudo
 }
 
+function abrirModal(modal, botaoFoco) {
+  clearTimeout(modalTimers[modal.id])
+  modal.classList.remove('fechando')
+  modal.hidden = false
+  botaoFoco.focus()
+}
+
+function fecharModal(modal) {
+  clearTimeout(modalTimers[modal.id])
+
+  if (modal.hidden) {
+    return
+  }
+
+  modal.classList.add('fechando')
+
+  modalTimers[modal.id] = setTimeout(() => {
+    modal.hidden = true
+    modal.classList.remove('fechando')
+  }, 160)
+}
+
+function fecharModalAoClicarFora(evento, modal, fechar) {
+  if (evento.target === modal) {
+    fechar()
+  }
+}
+
 function abrirAjudaMatrizes(contexto = 'geral') {
-  clearTimeout(ajudaMatrizesModalTimer)
   contextoAjudaMatrizes = contexto || 'geral'
   renderizarAjudaMatrizes(contextoAjudaMatrizes)
-  ajudaMatrizesModal.classList.remove('fechando')
-  ajudaMatrizesModal.hidden = false
-  fecharAjudaMatrizesButton.focus()
+  abrirModal(ajudaMatrizesModal, fecharAjudaMatrizesButton)
 }
 
 function fecharAjudaMatrizes() {
-  clearTimeout(ajudaMatrizesModalTimer)
-
-  if (ajudaMatrizesModal.hidden) {
-    return
-  }
-
-  ajudaMatrizesModal.classList.add('fechando')
-
-  ajudaMatrizesModalTimer = setTimeout(() => {
-    ajudaMatrizesModal.hidden = true
-    ajudaMatrizesModal.classList.remove('fechando')
-  }, 160)
+  fecharModal(ajudaMatrizesModal)
 }
 
 function abrirAjudaTabela() {
-  clearTimeout(ajudaModalTimer)
-  ajudaModal.classList.remove('fechando')
-  ajudaModal.hidden = false
-  fecharAjudaButton.focus()
+  abrirModal(ajudaModal, fecharAjudaButton)
 }
 
 function fecharAjudaTabela() {
-  clearTimeout(ajudaModalTimer)
-
-  if (ajudaModal.hidden) {
-    return
-  }
-
-  ajudaModal.classList.add('fechando')
-
-  ajudaModalTimer = setTimeout(() => {
-    ajudaModal.hidden = true
-    ajudaModal.classList.remove('fechando')
-  }, 160)
+  fecharModal(ajudaModal)
 }
 
 function limpar() {
-  const inputsMatrizes = document.querySelectorAll('#matriz-a input, #matriz-b input')
+  const inputsMatrizes = selecionarTodos('#matriz-a input, #matriz-b input')
 
   for (let i = 0; i < inputsMatrizes.length; i++) {
     inputsMatrizes[i].value = '0'
@@ -1316,6 +1465,7 @@ function limpar() {
   limparMensagemEResultado()
 }
 
+carregarIdentidadeVisual()
 aplicarTema(obterTemaInicial())
 
 window.addEventListener('hashchange', atualizarNavegacao)
@@ -1341,18 +1491,14 @@ saberMaisErroMatrizesButton.addEventListener('click', () => {
 })
 fecharAjudaMatrizesButton.addEventListener('click', fecharAjudaMatrizes)
 ajudaMatrizesModal.addEventListener('click', (evento) => {
-  if (evento.target === ajudaMatrizesModal) {
-    fecharAjudaMatrizes()
-  }
+  fecharModalAoClicarFora(evento, ajudaMatrizesModal, fecharAjudaMatrizes)
 })
 gerarTabelaButton.addEventListener('click', executarTabelaVerdade)
 limparTabelaButton.addEventListener('click', limparTabelaVerdade)
 ajudaTabelaButton.addEventListener('click', abrirAjudaTabela)
 fecharAjudaButton.addEventListener('click', fecharAjudaTabela)
 ajudaModal.addEventListener('click', (evento) => {
-  if (evento.target === ajudaModal) {
-    fecharAjudaTabela()
-  }
+  fecharModalAoClicarFora(evento, ajudaModal, fecharAjudaTabela)
 })
 
 proposicaoInput.addEventListener('keydown', (evento) => {
