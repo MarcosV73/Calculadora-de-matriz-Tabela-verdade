@@ -10,7 +10,13 @@ const matrizAContainer = document.querySelector('#matriz-a')
 const matrizBContainer = document.querySelector('#matriz-b')
 const resultadoContainer = document.querySelector('#resultado')
 const mensagemErro = document.querySelector('#mensagem-erro')
+const observacaoDimensoes = document.querySelector('#observacao-dimensoes')
 const aviso = document.querySelector('#aviso')
+const temaEscuroInput = document.querySelector('#tema-escuro')
+const tituloPagina = document.querySelector('#titulo-pagina')
+const subtituloPagina = document.querySelector('#subtitulo-pagina')
+const paginas = document.querySelectorAll('.app-page')
+const linksPagina = document.querySelectorAll('[data-page-link]')
 
 const gerarMatrizesButton = document.querySelector('#gerar-matrizes')
 const somarButton = document.querySelector('#somar')
@@ -18,11 +24,121 @@ const subtrairButton = document.querySelector('#subtrair')
 const multiplicarEscalarButton = document.querySelector('#multiplicar-escalar')
 const multiplicarMatrizesButton = document.querySelector('#multiplicar-matrizes')
 const limparButton = document.querySelector('#limpar')
-const dimensaoInputs = [linhasAInput, colunasAInput, linhasBInput, colunasBInput]
+const ajudaMatrizesButton = document.querySelector('#ajuda-matrizes')
+const acoesObservacaoMatrizes = document.querySelector('#acoes-observacao-matrizes')
+const saberMaisObservacaoMatrizesButton = document.querySelector('#saber-mais-observacao-matrizes')
+const acoesErroMatrizes = document.querySelector('#acoes-erro-matrizes')
+const saberMaisErroMatrizesButton = document.querySelector('#saber-mais-erro-matrizes')
+const ajudaMatrizesModal = document.querySelector('#ajuda-matrizes-modal')
+const fecharAjudaMatrizesButton = document.querySelector('#fechar-ajuda-matrizes')
+const ajudaMatrizesTitulo = document.querySelector('#ajuda-matrizes-titulo')
+const ajudaMatrizesSubtitulo = document.querySelector('#ajuda-matrizes-subtitulo')
+const ajudaMatrizesConteudo = document.querySelector('#ajuda-matrizes-conteudo')
+const proposicaoInput = document.querySelector('#proposicao-logica')
+const gerarTabelaButton = document.querySelector('#gerar-tabela')
+const limparTabelaButton = document.querySelector('#limpar-tabela')
+const ajudaTabelaButton = document.querySelector('#ajuda-tabela')
+const ajudaModal = document.querySelector('#ajuda-modal')
+const fecharAjudaButton = document.querySelector('#fechar-ajuda')
+const mensagemTabela = document.querySelector('#mensagem-tabela')
+const resumoTabela = document.querySelector('#resumo-tabela')
+const totalLinhasTabela = document.querySelector('#total-linhas-tabela')
+const totalColunasTabela = document.querySelector('#total-colunas-tabela')
+const variaveisTabela = document.querySelector('#variaveis-tabela')
+const tabelaVerdadeResultado = document.querySelector('#tabela-verdade-resultado')
+const TEMA_STORAGE_KEY = 'calculadora-matrizes-tema'
+const paginasInfo = {
+  home: {
+    titulo: 'Central de Cálculos',
+    subtitulo: 'Escolha uma ferramenta para iniciar.',
+  },
+  matrizes: {
+    titulo: 'Calculadora de Matrizes',
+    subtitulo: 'Realize operações básicas entre matrizes de forma simples.',
+  },
+  'tabela-verdade': {
+    titulo: 'Tabela Verdade',
+    subtitulo: 'Construa tabelas-verdade de proposições simples e compostas.',
+  },
+}
 
 let avisoTimer = null
 let avisoSaidaTimer = null
+let ajudaMatrizesModalTimer = null
+let ajudaModalTimer = null
 let audioContext = null
+let contextoAjudaMatrizes = 'geral'
+
+function obterTemaSalvo() {
+  try {
+    return localStorage.getItem(TEMA_STORAGE_KEY)
+  } catch (erro) {
+    return null
+  }
+}
+
+function salvarTema(tema) {
+  try {
+    localStorage.setItem(TEMA_STORAGE_KEY, tema)
+  } catch (erro) {
+    console.warn('Nao foi possivel salvar o tema escolhido.', erro)
+  }
+}
+
+function obterTemaInicial() {
+  const temaSalvo = obterTemaSalvo()
+
+  if (temaSalvo === 'claro' || temaSalvo === 'escuro') {
+    return temaSalvo
+  }
+
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    return 'escuro'
+  }
+
+  return 'claro'
+}
+
+function aplicarTema(tema) {
+  const temaEscuro = tema === 'escuro'
+
+  document.documentElement.dataset.theme = temaEscuro ? 'dark' : 'light'
+  temaEscuroInput.checked = temaEscuro
+}
+
+function alternarTema() {
+  const tema = temaEscuroInput.checked ? 'escuro' : 'claro'
+
+  aplicarTema(tema)
+  salvarTema(tema)
+}
+
+function obterPaginaAtual() {
+  const pagina = window.location.hash.replace('#', '')
+
+  if (paginasInfo[pagina]) {
+    return pagina
+  }
+
+  return 'home'
+}
+
+function atualizarNavegacao() {
+  const paginaAtual = obterPaginaAtual()
+  const infoPagina = paginasInfo[paginaAtual]
+
+  for (let i = 0; i < paginas.length; i++) {
+    paginas[i].hidden = paginas[i].dataset.page !== paginaAtual
+  }
+
+  for (let i = 0; i < linksPagina.length; i++) {
+    linksPagina[i].classList.toggle('ativo', linksPagina[i].dataset.pageLink === paginaAtual)
+  }
+
+  tituloPagina.textContent = infoPagina.titulo
+  subtituloPagina.textContent = infoPagina.subtitulo
+  document.title = `${infoPagina.titulo} | Central de Cálculos`
+}
 
 function lerNumeroInteiro(input) {
   return Number.parseInt(input.value, 10)
@@ -170,44 +286,307 @@ function esconderAviso() {
   }, 300)
 }
 
-function montarAvisoDimensoes(linhasA, colunasA, linhasB, colunasB) {
-  const somaSubtracaoImpossivel = linhasA !== linhasB || colunasA !== colunasB
-  const multiplicacaoImpossivel = colunasA !== linhasB
+function obterOperacoesDisponiveis(linhasA, colunasA, linhasB, colunasB) {
+  return {
+    somaSubtracao: linhasA === linhasB && colunasA === colunasB,
+    multiplicacaoEscalar: true,
+    multiplicacaoMatrizes: colunasA === linhasB,
+  }
+}
 
-  if (somaSubtracaoImpossivel && multiplicacaoImpossivel) {
-    return 'Com essas dimensões, não é possível somar, subtrair nem multiplicar as matrizes entre si.'
+function juntarLista(itens) {
+  if (itens.length === 0) {
+    return ''
   }
 
-  if (somaSubtracaoImpossivel) {
-    return 'Com essas dimensões, não é possível somar nem subtrair as matrizes.'
+  if (itens.length === 1) {
+    return itens[0]
   }
 
-  if (multiplicacaoImpossivel) {
-    return 'Com essas dimensões, não é possível multiplicar as matrizes entre si.'
+  if (itens.length === 2) {
+    return `${itens[0]} e ${itens[1]}`
+  }
+
+  return `${itens.slice(0, -1).join(', ')} e ${itens[itens.length - 1]}`
+}
+
+function montarObservacaoDimensoes(linhasA, colunasA, linhasB, colunasB) {
+  const operacoes = obterOperacoesDisponiveis(linhasA, colunasA, linhasB, colunasB)
+  const operacoesPossiveis = []
+  const operacoesIndisponiveis = []
+
+  if (operacoes.somaSubtracao) {
+    operacoesPossiveis.push('somar', 'subtrair')
+  } else {
+    operacoesIndisponiveis.push('somar', 'subtrair')
+  }
+
+  operacoesPossiveis.push('multiplicar por escalar')
+
+  if (operacoes.multiplicacaoMatrizes) {
+    operacoesPossiveis.push('multiplicar as matrizes entre si')
+  } else {
+    operacoesIndisponiveis.push('multiplicar as matrizes entre si')
+  }
+
+  if (operacoesIndisponiveis.length === 0) {
+    return `Com essas dimensões, é possível ${juntarLista(operacoesPossiveis)}.`
+  }
+
+  if (operacoesPossiveis.length === 1) {
+    return `Com essas dimensões, só é possível ${operacoesPossiveis[0]}. Não é possível ${juntarLista(operacoesIndisponiveis)}.`
+  }
+
+  return `Com essas dimensões, é possível ${juntarLista(operacoesPossiveis)}. Não é possível ${juntarLista(operacoesIndisponiveis)}.`
+}
+
+function dimensoesTemOperacaoIndisponivel(linhasA, colunasA, linhasB, colunasB) {
+  const operacoes = obterOperacoesDisponiveis(linhasA, colunasA, linhasB, colunasB)
+
+  return !operacoes.somaSubtracao || !operacoes.multiplicacaoMatrizes
+}
+
+function obterDimensoesAtuais() {
+  return {
+    linhasA: lerNumeroInteiro(linhasAInput),
+    colunasA: lerNumeroInteiro(colunasAInput),
+    linhasB: lerNumeroInteiro(linhasBInput),
+    colunasB: lerNumeroInteiro(colunasBInput),
+  }
+}
+
+function formatarDimensao(linhas, colunas) {
+  return `${linhas}x${colunas}`
+}
+
+function obterContextoAjudaPorDimensoes(linhasA, colunasA, linhasB, colunasB) {
+  const operacoes = obterOperacoesDisponiveis(linhasA, colunasA, linhasB, colunasB)
+
+  if (!operacoes.somaSubtracao && !operacoes.multiplicacaoMatrizes) {
+    return 'regras'
+  }
+
+  if (!operacoes.somaSubtracao) {
+    return 'soma-subtracao'
+  }
+
+  if (!operacoes.multiplicacaoMatrizes) {
+    return 'multiplicacao'
   }
 
   return ''
 }
 
-function avisarSeDimensoesForemImpossiveis() {
+function atualizarAcaoObservacaoMatrizes(contexto) {
+  acoesObservacaoMatrizes.hidden = !contexto
+
+  if (contexto) {
+    saberMaisObservacaoMatrizesButton.dataset.contextoAjuda = contexto
+  }
+}
+
+function atualizarAcaoErroMatrizes(contexto) {
+  acoesErroMatrizes.hidden = !contexto
+
+  if (contexto) {
+    saberMaisErroMatrizesButton.dataset.contextoAjuda = contexto
+  }
+}
+
+function definirObservacaoDimensoes(mensagem, temOperacaoIndisponivel = true) {
+  observacaoDimensoes.textContent = mensagem
+  observacaoDimensoes.classList.remove('observacao-dimensoes-alerta')
+  observacaoDimensoes.classList.remove('observacao-dimensoes-sucesso')
+
+  if (!mensagem) {
+    atualizarAcaoObservacaoMatrizes('')
+    return
+  }
+
+  if (temOperacaoIndisponivel) {
+    observacaoDimensoes.classList.add('observacao-dimensoes-alerta')
+    return
+  }
+
+  observacaoDimensoes.classList.add('observacao-dimensoes-sucesso')
+}
+
+function atualizarObservacaoDimensoes() {
   const linhasA = lerNumeroInteiro(linhasAInput)
   const colunasA = lerNumeroInteiro(colunasAInput)
   const linhasB = lerNumeroInteiro(linhasBInput)
   const colunasB = lerNumeroInteiro(colunasBInput)
 
   if (!dimensaoValida(linhasA, colunasA) || !dimensaoValida(linhasB, colunasB)) {
-    mostrarAviso('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
+    definirObservacaoDimensoes('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
+    atualizarAcaoObservacaoMatrizes('')
+    esconderAviso()
     return
   }
 
-  const avisoDimensoes = montarAvisoDimensoes(linhasA, colunasA, linhasB, colunasB)
+  const observacao = montarObservacaoDimensoes(linhasA, colunasA, linhasB, colunasB)
+  const temOperacaoIndisponivel = dimensoesTemOperacaoIndisponivel(
+    linhasA,
+    colunasA,
+    linhasB,
+    colunasB,
+  )
 
-  if (avisoDimensoes) {
-    mostrarAviso(avisoDimensoes)
-    return
-  }
+  definirObservacaoDimensoes(observacao, temOperacaoIndisponivel)
+  atualizarAcaoObservacaoMatrizes(
+    obterContextoAjudaPorDimensoes(linhasA, colunasA, linhasB, colunasB),
+  )
 
   esconderAviso()
+}
+
+function criarTextoDimensoesAtuais() {
+  const dimensoes = obterDimensoesAtuais()
+
+  if (
+    !dimensaoValida(dimensoes.linhasA, dimensoes.colunasA) ||
+    !dimensaoValida(dimensoes.linhasB, dimensoes.colunasB)
+  ) {
+    return 'Ajuste as dimensões para comparar as regras com as matrizes atuais.'
+  }
+
+  return `Matriz A: ${formatarDimensao(dimensoes.linhasA, dimensoes.colunasA)}. Matriz B: ${formatarDimensao(dimensoes.linhasB, dimensoes.colunasB)}.`
+}
+
+function criarBlocoExemplosMatrizes() {
+  return `
+    <div class="matrix-help-examples">
+      <div class="matrix-example-card">
+        <h4>Soma possível</h4>
+        <div class="matrix-equation">
+          <span class="mini-matrix">1&nbsp;2<br />5&nbsp;6</span>
+          <span>+</span>
+          <span class="mini-matrix">3&nbsp;4<br />7&nbsp;8</span>
+          <span>=</span>
+          <span class="mini-matrix">4&nbsp;6<br />12&nbsp;14</span>
+        </div>
+        <p>As duas matrizes têm dimensão 2x2.</p>
+      </div>
+      <div class="matrix-example-card">
+        <h4>Exemplos de dimensões</h4>
+        <ul>
+          <li><strong>2x3 + 2x3</strong>: possível.</li>
+          <li><strong>2x3 + 3x2</strong>: impossível.</li>
+          <li><strong>2x3 × 3x2</strong>: possível.</li>
+          <li><strong>2x3 × 2x2</strong>: impossível.</li>
+        </ul>
+      </div>
+    </div>
+  `
+}
+
+function obterConteudoAjudaMatrizes(contexto) {
+  const dimensoesAtuais = criarTextoDimensoesAtuais()
+
+  const secoes = {
+    geral: {
+      titulo: 'Ajuda da Calculadora de Matrizes',
+      subtitulo: 'Entenda o que é uma matriz e quais regras cada operação precisa seguir.',
+      conteudo: `
+        <section class="help-notes">
+          <h3>O que é uma matriz</h3>
+          <p>Uma matriz é uma tabela de números organizada em linhas e colunas. A dimensão 2x3, por exemplo, significa 2 linhas e 3 colunas.</p>
+        </section>
+        <section class="help-notes">
+          <h3>Regras das operações</h3>
+          <div class="rule-list">
+            <div><strong>Soma</strong><span>As duas matrizes precisam ter exatamente as mesmas dimensões.</span></div>
+            <div><strong>Subtração</strong><span>Também exige o mesmo número de linhas e colunas.</span></div>
+            <div><strong>Multiplicação por escalar</strong><span>Sempre é possível: cada elemento é multiplicado pelo número escolhido.</span></div>
+            <div><strong>Multiplicação entre matrizes</strong><span>O número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.</span></div>
+          </div>
+        </section>
+        ${criarBlocoExemplosMatrizes()}
+      `,
+    },
+    'soma-subtracao': {
+      titulo: 'Por que não dá para somar ou subtrair?',
+      subtitulo: dimensoesAtuais,
+      conteudo: `
+        <section class="help-notes">
+          <h3>Regra da soma e da subtração</h3>
+          <p>Para somar ou subtrair matrizes, elas precisam ter exatamente o mesmo número de linhas e colunas. Cada posição da Matriz A é combinada com a mesma posição da Matriz B.</p>
+        </section>
+        <div class="rule-list compact">
+          <div><strong>2x3 + 2x3</strong><span>Possível, porque as dimensões são iguais.</span></div>
+          <div><strong>2x3 + 3x2</strong><span>Impossível, porque as dimensões são diferentes.</span></div>
+        </div>
+      `,
+    },
+    soma: {
+      titulo: 'Por que essa soma não funciona?',
+      subtitulo: dimensoesAtuais,
+      conteudo: `
+        <section class="help-notes">
+          <h3>Regra da soma</h3>
+          <p>A soma só existe quando as duas matrizes têm as mesmas dimensões. Corrija as linhas e colunas para que Matriz A e Matriz B fiquem iguais.</p>
+        </section>
+        ${criarBlocoExemplosMatrizes()}
+      `,
+    },
+    subtracao: {
+      titulo: 'Por que essa subtração não funciona?',
+      subtitulo: dimensoesAtuais,
+      conteudo: `
+        <section class="help-notes">
+          <h3>Regra da subtração</h3>
+          <p>A subtração segue a mesma regra da soma: as matrizes precisam ter o mesmo número de linhas e colunas.</p>
+        </section>
+        <div class="rule-list compact">
+          <div><strong>2x2 - 2x2</strong><span>Possível.</span></div>
+          <div><strong>2x4 - 4x2</strong><span>Impossível.</span></div>
+        </div>
+      `,
+    },
+    multiplicacao: {
+      titulo: 'Por que essa multiplicação não funciona?',
+      subtitulo: dimensoesAtuais,
+      conteudo: `
+        <section class="help-notes">
+          <h3>Regra da multiplicação entre matrizes</h3>
+          <p>Para multiplicar A × B, o número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.</p>
+        </section>
+        <div class="rule-list compact">
+          <div><strong>2x3 × 3x2</strong><span>Possível, porque 3 colunas em A combinam com 3 linhas em B.</span></div>
+          <div><strong>2x3 × 2x2</strong><span>Impossível, porque 3 é diferente de 2.</span></div>
+        </div>
+      `,
+    },
+    escalar: {
+      titulo: 'Multiplicação por escalar',
+      subtitulo: 'Essa operação sempre é possível para qualquer matriz válida.',
+      conteudo: `
+        <section class="help-notes">
+          <h3>Como funciona</h3>
+          <p>Multiplicar por escalar significa multiplicar todos os elementos da matriz por um número real.</p>
+        </section>
+        <div class="matrix-equation single">
+          <span>2 ×</span>
+          <span class="mini-matrix">1&nbsp;3<br />4&nbsp;5</span>
+          <span>=</span>
+          <span class="mini-matrix">2&nbsp;6<br />8&nbsp;10</span>
+        </div>
+      `,
+    },
+    regras: {
+      titulo: 'Quais regras falharam?',
+      subtitulo: dimensoesAtuais,
+      conteudo: `
+        <section class="help-notes">
+          <h3>As dimensões atuais bloqueiam mais de uma operação</h3>
+          <p>Para somar ou subtrair, as dimensões precisam ser iguais. Para multiplicar A × B, as colunas de A precisam coincidir com as linhas de B.</p>
+        </section>
+        ${criarBlocoExemplosMatrizes()}
+      `,
+    },
+  }
+
+  return secoes[contexto] || secoes.geral
 }
 
 // Cria os inputs numéricos de uma matriz dentro do container informado.
@@ -248,14 +627,15 @@ function gerarMatrizes() {
   const colunasB = lerNumeroInteiro(colunasBInput)
 
   if (!dimensaoValida(linhasA, colunasA) || !dimensaoValida(linhasB, colunasB)) {
-    mostrarErro('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
+    definirObservacaoDimensoes('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
+    mostrarErro('As matrizes precisam ter pelo menos 1 linha e 1 coluna.', false)
     return
   }
 
   gerarInputsMatriz(matrizAContainer, 'A', linhasA, colunasA)
   gerarInputsMatriz(matrizBContainer, 'B', linhasB, colunasB)
   limparMensagemEResultado()
-  avisarSeDimensoesForemImpossiveis()
+  atualizarObservacaoDimensoes()
 }
 
 // Lê os valores dos inputs e transforma tudo em um array de arrays.
@@ -354,6 +734,7 @@ function multiplicarMatrizes(matrizA, matrizB) {
 function renderizarResultado(matriz) {
   mensagemErro.textContent = ''
   resultadoContainer.innerHTML = ''
+  atualizarAcaoErroMatrizes('')
 
   const tabela = document.createElement('table')
   tabela.classList.add('matrix-grid', 'resultado-grid')
@@ -374,19 +755,49 @@ function renderizarResultado(matriz) {
   mostrarAviso('Operação realizada com sucesso.', 'sucesso')
 }
 
-function mostrarErro(mensagem) {
+function mostrarErro(mensagem, exibirPopup = true, contextoAjuda = '') {
   resultadoContainer.innerHTML = ''
-  mensagemErro.textContent = 'Opera\u00e7\u00e3o imposs\u00edvel'
-  mostrarAviso(mensagem, 'erro')
+  mensagemErro.textContent = mensagem || 'Operação impossível'
+  atualizarAcaoErroMatrizes(contextoAjuda)
+
+  if (exibirPopup) {
+    mostrarAviso(mensagem, 'erro')
+    return
+  }
+
+  esconderAviso()
 }
 
 function limparMensagemEResultado() {
   mensagemErro.textContent = ''
   resultadoContainer.innerHTML = ''
+  atualizarAcaoErroMatrizes('')
 }
 
 function possuemMesmasDimensoes(matrizA, matrizB) {
   return matrizA.length === matrizB.length && matrizA[0].length === matrizB[0].length
+}
+
+function atualizarObservacaoPorMatrizes(matrizA, matrizB) {
+  const linhasA = matrizA.length
+  const colunasA = matrizA[0].length
+  const linhasB = matrizB.length
+  const colunasB = matrizB[0].length
+  const observacao = montarObservacaoDimensoes(linhasA, colunasA, linhasB, colunasB)
+
+  definirObservacaoDimensoes(
+    observacao,
+    dimensoesTemOperacaoIndisponivel(linhasA, colunasA, linhasB, colunasB),
+  )
+  atualizarAcaoObservacaoMatrizes(
+    obterContextoAjudaPorDimensoes(linhasA, colunasA, linhasB, colunasB),
+  )
+}
+
+function mostrarErroOperacaoIndisponivel(matrizA, matrizB, mensagem, contextoAjuda) {
+  atualizarObservacaoPorMatrizes(matrizA, matrizB)
+  contextoAjudaMatrizes = contextoAjuda
+  mostrarErro(mensagem, true, contextoAjuda)
 }
 
 function executarSoma() {
@@ -394,7 +805,12 @@ function executarSoma() {
   const matrizB = lerMatriz(matrizBContainer)
 
   if (!possuemMesmasDimensoes(matrizA, matrizB)) {
-    mostrarErro('Não é possível somar: a Matriz A e a Matriz B precisam ter as mesmas dimensões.')
+    mostrarErroOperacaoIndisponivel(
+      matrizA,
+      matrizB,
+      'Ainda não dá para somar essas matrizes. Ajuste a Matriz A e a Matriz B para terem o mesmo número de linhas e colunas.',
+      'soma',
+    )
     return
   }
 
@@ -406,7 +822,12 @@ function executarSubtracao() {
   const matrizB = lerMatriz(matrizBContainer)
 
   if (!possuemMesmasDimensoes(matrizA, matrizB)) {
-    mostrarErro('Não é possível subtrair: a Matriz A e a Matriz B precisam ter as mesmas dimensões.')
+    mostrarErroOperacaoIndisponivel(
+      matrizA,
+      matrizB,
+      'Ainda não dá para subtrair essas matrizes. As duas precisam ter exatamente as mesmas dimensões.',
+      'subtracao',
+    )
     return
   }
 
@@ -427,11 +848,461 @@ function executarMultiplicacaoMatrizes() {
   const linhasB = matrizB.length
 
   if (colunasA !== linhasB) {
-    mostrarErro('Não é possível multiplicar: o número de colunas da Matriz A precisa ser igual ao número de linhas da Matriz B.')
+    mostrarErroOperacaoIndisponivel(
+      matrizA,
+      matrizB,
+      'Atualmente não é possível multiplicar essas matrizes porque o número de colunas da Matriz A é diferente do número de linhas da Matriz B.',
+      'multiplicacao',
+    )
     return
   }
 
   renderizarResultado(multiplicarMatrizes(matrizA, matrizB))
+}
+
+function normalizarEspacosProposicao(proposicao) {
+  return proposicao.replace(/\s+/g, ' ').trim()
+}
+
+function normalizarOperadoresLogicos(proposicao) {
+  return normalizarEspacosProposicao(proposicao)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/<->/g, ' ↔ ')
+    .replace(/->/g, ' → ')
+    .replace(/&&/g, ' ∧ ')
+    .replace(/\|\|/g, ' ∨ ')
+    .replace(/!/g, ' ~ ')
+    .replace(/\bse\s+e\s+somente\s+se\b/gi, ' ↔ ')
+    .replace(/\bimplica\b/gi, ' → ')
+    .replace(/\bentao\b/gi, ' → ')
+    .replace(/\bnao\b/gi, ' ~ ')
+    .replace(/\bnot\b/gi, ' ~ ')
+    .replace(/\band\b/gi, ' ∧ ')
+    .replace(/\be\b/gi, ' ∧ ')
+    .replace(/\bor\b/gi, ' ∨ ')
+    .replace(/\bou\b/gi, ' ∨ ')
+    .replace(/\s*([()~∧∨→↔])\s*/g, ' $1 ')
+}
+
+function normalizarProposicao(proposicao) {
+  return normalizarEspacosProposicao(normalizarOperadoresLogicos(proposicao))
+}
+
+function criarErroSintaxe(mensagem) {
+  const erro = new Error(mensagem)
+  erro.name = 'ErroSintaxe'
+
+  return erro
+}
+
+// Converte o texto digitado em tokens que o parser consegue interpretar.
+function tokenizarProposicao(proposicao) {
+  const tokens = []
+  let indice = 0
+
+  while (indice < proposicao.length) {
+    const caractere = proposicao[indice]
+
+    if (/\s/.test(caractere)) {
+      indice += 1
+      continue
+    }
+
+    if ('()~∧∨→↔'.includes(caractere)) {
+      tokens.push({ tipo: 'simbolo', valor: caractere })
+      indice += 1
+      continue
+    }
+
+    if (/[a-zA-Z]/.test(caractere)) {
+      let palavra = ''
+
+      while (indice < proposicao.length && /[a-zA-Z]/.test(proposicao[indice])) {
+        palavra += proposicao[indice]
+        indice += 1
+      }
+
+      const palavraNormalizada = palavra.toLowerCase()
+
+      if (palavraNormalizada === 'not') {
+        tokens.push({ tipo: 'simbolo', valor: '~' })
+        continue
+      }
+
+      if (palavraNormalizada === 'and' || palavraNormalizada === 'e') {
+        throw criarErroSintaxe('Conectivo inválido. Para E, use ∧ ou &&.')
+      }
+
+      if (palavraNormalizada === 'or' || palavraNormalizada === 'ou') {
+        throw criarErroSintaxe('Conectivo inválido. Para OU, use ∨ ou ||.')
+      }
+
+      if (palavraNormalizada.length > 1) {
+        throw criarErroSintaxe('Use variáveis com apenas uma letra, como p, q, r ou s.')
+      }
+
+      tokens.push({ tipo: 'variavel', valor: palavraNormalizada })
+      continue
+    }
+
+    if ('&|-<>'.includes(caractere)) {
+      throw criarErroSintaxe(
+        'Conectivo incompleto ou inválido. Use &&, ||, ->, <->, ∧, ∨, → ou ↔.',
+      )
+    }
+
+    throw criarErroSintaxe(`Caractere inválido "${caractere}". Use variáveis e conectivos válidos.`)
+  }
+
+  return tokens
+}
+
+function obterVariaveisProposicao(tokens) {
+  const variaveis = []
+
+  for (let i = 0; i < tokens.length; i++) {
+    if (tokens[i].tipo === 'variavel' && !variaveis.includes(tokens[i].valor)) {
+      variaveis.push(tokens[i].valor)
+    }
+  }
+
+  return variaveis.sort()
+}
+
+// Parser recursivo com precedência: ~, ∧, ∨, → e ↔.
+function criarParser(tokens) {
+  let posicao = 0
+
+  function tokenAtual() {
+    return tokens[posicao]
+  }
+
+  function consumir(valor) {
+    if (tokenAtual() && tokenAtual().valor === valor) {
+      posicao += 1
+      return true
+    }
+
+    return false
+  }
+
+  function exigir(valor, mensagem) {
+    if (!consumir(valor)) {
+      throw criarErroSintaxe(mensagem)
+    }
+  }
+
+  function criarNo(tipo, esquerda, direita) {
+    return { tipo, esquerda, direita }
+  }
+
+  function analisarBicondicional() {
+    let no = analisarCondicional()
+
+    while (consumir('↔')) {
+      no = criarNo('bicondicional', no, analisarCondicional())
+    }
+
+    return no
+  }
+
+  function analisarCondicional() {
+    const no = analisarOu()
+
+    if (consumir('→')) {
+      return criarNo('condicional', no, analisarCondicional())
+    }
+
+    return no
+  }
+
+  function analisarOu() {
+    let no = analisarE()
+
+    while (consumir('∨')) {
+      no = criarNo('disjuncao', no, analisarE())
+    }
+
+    return no
+  }
+
+  function analisarE() {
+    let no = analisarNegacao()
+
+    while (consumir('∧')) {
+      no = criarNo('conjuncao', no, analisarNegacao())
+    }
+
+    return no
+  }
+
+  function analisarNegacao() {
+    if (consumir('~')) {
+      return { tipo: 'negacao', valor: analisarNegacao() }
+    }
+
+    return analisarPrimario()
+  }
+
+  function analisarPrimario() {
+    const token = tokenAtual()
+
+    if (!token) {
+      throw criarErroSintaxe('A proposição terminou antes do esperado.')
+    }
+
+    if (token.tipo === 'variavel') {
+      posicao += 1
+      return { tipo: 'variavel', nome: token.valor }
+    }
+
+    if (consumir('(')) {
+      const no = analisarBicondicional()
+      exigir(')', 'Feche os parênteses da proposição.')
+      return no
+    }
+
+    throw criarErroSintaxe(`Erro de sintaxe perto de "${token.valor}".`)
+  }
+
+  function analisar() {
+    const arvore = analisarBicondicional()
+
+    if (tokenAtual()) {
+      throw criarErroSintaxe(`Erro de sintaxe perto de "${tokenAtual().valor}".`)
+    }
+
+    return arvore
+  }
+
+  return { analisar }
+}
+
+function analisarProposicao(proposicao) {
+  const proposicaoNormalizada = normalizarProposicao(proposicao)
+  const tokens = tokenizarProposicao(proposicaoNormalizada)
+  const variaveis = obterVariaveisProposicao(tokens)
+
+  if (variaveis.length === 0) {
+    throw criarErroSintaxe('Digite ao menos uma variável, como p, q, r ou s.')
+  }
+
+  if (variaveis.length > 8) {
+    throw criarErroSintaxe('Use no máximo 8 variáveis para manter a tabela legível.')
+  }
+
+  return {
+    arvore: criarParser(tokens).analisar(),
+    proposicaoNormalizada,
+    variaveis,
+  }
+}
+
+function avaliarProposicao(no, valores) {
+  if (no.tipo === 'variavel') {
+    return valores[no.nome]
+  }
+
+  if (no.tipo === 'negacao') {
+    return !avaliarProposicao(no.valor, valores)
+  }
+
+  const esquerda = avaliarProposicao(no.esquerda, valores)
+  const direita = avaliarProposicao(no.direita, valores)
+
+  if (no.tipo === 'conjuncao') {
+    return esquerda && direita
+  }
+
+  if (no.tipo === 'disjuncao') {
+    return esquerda || direita
+  }
+
+  if (no.tipo === 'condicional') {
+    return !esquerda || direita
+  }
+
+  return esquerda === direita
+}
+
+// Gera as 2^n linhas da tabela, alternando V e F para cada variável.
+function gerarCombinacoesValores(variaveis) {
+  const combinacoes = []
+  const totalLinhas = 2 ** variaveis.length
+
+  for (let linha = 0; linha < totalLinhas; linha++) {
+    const valores = {}
+
+    for (let coluna = 0; coluna < variaveis.length; coluna++) {
+      const deslocamento = variaveis.length - coluna - 1
+      valores[variaveis[coluna]] = ((linha >> deslocamento) & 1) === 0
+    }
+
+    combinacoes.push(valores)
+  }
+
+  return combinacoes
+}
+
+function gerarTabelaVerdade(proposicao) {
+  const analise = analisarProposicao(proposicao)
+  const combinacoes = gerarCombinacoesValores(analise.variaveis)
+  const linhas = []
+
+  for (let i = 0; i < combinacoes.length; i++) {
+    linhas.push({
+      valores: combinacoes[i],
+      resultado: avaliarProposicao(analise.arvore, combinacoes[i]),
+    })
+  }
+
+  return {
+    linhas,
+    proposicaoNormalizada: analise.proposicaoNormalizada,
+    totalColunas: analise.variaveis.length + 1,
+    totalLinhas: linhas.length,
+    variaveis: analise.variaveis,
+  }
+}
+
+function formatarValorLogico(valor) {
+  return valor ? 'V' : 'F'
+}
+
+function criarCelulaValor(valor) {
+  const celula = document.createElement('td')
+  celula.textContent = formatarValorLogico(valor)
+  celula.classList.add(valor ? 'truth-value-true' : 'truth-value-false')
+
+  return celula
+}
+
+function renderizarTabelaVerdade(tabela) {
+  mensagemTabela.textContent = ''
+  tabelaVerdadeResultado.innerHTML = ''
+  resumoTabela.hidden = false
+  totalLinhasTabela.textContent = tabela.totalLinhas
+  totalColunasTabela.textContent = tabela.totalColunas
+  variaveisTabela.textContent = tabela.variaveis.join(', ')
+
+  const elementoTabela = document.createElement('table')
+  const cabecalho = document.createElement('thead')
+  const corpo = document.createElement('tbody')
+  const linhaCabecalho = document.createElement('tr')
+
+  elementoTabela.classList.add('truth-table')
+
+  for (let i = 0; i < tabela.variaveis.length; i++) {
+    const coluna = document.createElement('th')
+    coluna.textContent = tabela.variaveis[i]
+    linhaCabecalho.appendChild(coluna)
+  }
+
+  const colunaResultado = document.createElement('th')
+  colunaResultado.textContent = tabela.proposicaoNormalizada
+  linhaCabecalho.appendChild(colunaResultado)
+  cabecalho.appendChild(linhaCabecalho)
+
+  for (let i = 0; i < tabela.linhas.length; i++) {
+    const linha = document.createElement('tr')
+
+    for (let j = 0; j < tabela.variaveis.length; j++) {
+      linha.appendChild(criarCelulaValor(tabela.linhas[i].valores[tabela.variaveis[j]]))
+    }
+
+    linha.appendChild(criarCelulaValor(tabela.linhas[i].resultado))
+    corpo.appendChild(linha)
+  }
+
+  elementoTabela.appendChild(cabecalho)
+  elementoTabela.appendChild(corpo)
+  tabelaVerdadeResultado.appendChild(elementoTabela)
+  mostrarAviso('Tabela verdade gerada com sucesso.', 'sucesso')
+}
+
+function mostrarErroTabela(mensagem) {
+  tabelaVerdadeResultado.innerHTML = ''
+  resumoTabela.hidden = true
+  mensagemTabela.textContent = mensagem
+  mostrarAviso(mensagem)
+}
+
+function executarTabelaVerdade() {
+  const proposicao = proposicaoInput.value.trim()
+
+  if (!proposicao) {
+    mostrarErroTabela('Digite uma proposição lógica para gerar a tabela verdade.')
+    return
+  }
+
+  try {
+    renderizarTabelaVerdade(gerarTabelaVerdade(proposicao))
+  } catch (erro) {
+    mostrarErroTabela(erro.message || 'Não foi possível interpretar a proposição.')
+  }
+}
+
+function limparTabelaVerdade() {
+  proposicaoInput.value = ''
+  mensagemTabela.textContent = ''
+  tabelaVerdadeResultado.innerHTML = ''
+  resumoTabela.hidden = true
+  esconderAviso()
+}
+
+function renderizarAjudaMatrizes(contexto) {
+  const ajuda = obterConteudoAjudaMatrizes(contexto)
+
+  ajudaMatrizesTitulo.textContent = ajuda.titulo
+  ajudaMatrizesSubtitulo.textContent = ajuda.subtitulo
+  ajudaMatrizesConteudo.innerHTML = ajuda.conteudo
+}
+
+function abrirAjudaMatrizes(contexto = 'geral') {
+  clearTimeout(ajudaMatrizesModalTimer)
+  contextoAjudaMatrizes = contexto || 'geral'
+  renderizarAjudaMatrizes(contextoAjudaMatrizes)
+  ajudaMatrizesModal.classList.remove('fechando')
+  ajudaMatrizesModal.hidden = false
+  fecharAjudaMatrizesButton.focus()
+}
+
+function fecharAjudaMatrizes() {
+  clearTimeout(ajudaMatrizesModalTimer)
+
+  if (ajudaMatrizesModal.hidden) {
+    return
+  }
+
+  ajudaMatrizesModal.classList.add('fechando')
+
+  ajudaMatrizesModalTimer = setTimeout(() => {
+    ajudaMatrizesModal.hidden = true
+    ajudaMatrizesModal.classList.remove('fechando')
+  }, 160)
+}
+
+function abrirAjudaTabela() {
+  clearTimeout(ajudaModalTimer)
+  ajudaModal.classList.remove('fechando')
+  ajudaModal.hidden = false
+  fecharAjudaButton.focus()
+}
+
+function fecharAjudaTabela() {
+  clearTimeout(ajudaModalTimer)
+
+  if (ajudaModal.hidden) {
+    return
+  }
+
+  ajudaModal.classList.add('fechando')
+
+  ajudaModalTimer = setTimeout(() => {
+    ajudaModal.hidden = true
+    ajudaModal.classList.remove('fechando')
+  }, 160)
 }
 
 function limpar() {
@@ -445,15 +1316,50 @@ function limpar() {
   limparMensagemEResultado()
 }
 
+aplicarTema(obterTemaInicial())
+
+window.addEventListener('hashchange', atualizarNavegacao)
+document.addEventListener('keydown', (evento) => {
+  if (evento.key === 'Escape') {
+    fecharAjudaMatrizes()
+    fecharAjudaTabela()
+  }
+})
+temaEscuroInput.addEventListener('change', alternarTema)
 gerarMatrizesButton.addEventListener('click', gerarMatrizes)
 somarButton.addEventListener('click', executarSoma)
 subtrairButton.addEventListener('click', executarSubtracao)
 multiplicarEscalarButton.addEventListener('click', executarMultiplicacaoPorEscalar)
 multiplicarMatrizesButton.addEventListener('click', executarMultiplicacaoMatrizes)
 limparButton.addEventListener('click', limpar)
+ajudaMatrizesButton.addEventListener('click', () => abrirAjudaMatrizes('geral'))
+saberMaisObservacaoMatrizesButton.addEventListener('click', () => {
+  abrirAjudaMatrizes(saberMaisObservacaoMatrizesButton.dataset.contextoAjuda || 'regras')
+})
+saberMaisErroMatrizesButton.addEventListener('click', () => {
+  abrirAjudaMatrizes(saberMaisErroMatrizesButton.dataset.contextoAjuda || contextoAjudaMatrizes)
+})
+fecharAjudaMatrizesButton.addEventListener('click', fecharAjudaMatrizes)
+ajudaMatrizesModal.addEventListener('click', (evento) => {
+  if (evento.target === ajudaMatrizesModal) {
+    fecharAjudaMatrizes()
+  }
+})
+gerarTabelaButton.addEventListener('click', executarTabelaVerdade)
+limparTabelaButton.addEventListener('click', limparTabelaVerdade)
+ajudaTabelaButton.addEventListener('click', abrirAjudaTabela)
+fecharAjudaButton.addEventListener('click', fecharAjudaTabela)
+ajudaModal.addEventListener('click', (evento) => {
+  if (evento.target === ajudaModal) {
+    fecharAjudaTabela()
+  }
+})
 
-for (let i = 0; i < dimensaoInputs.length; i++) {
-  dimensaoInputs[i].addEventListener('change', avisarSeDimensoesForemImpossiveis)
-}
+proposicaoInput.addEventListener('keydown', (evento) => {
+  if (evento.key === 'Enter') {
+    executarTabelaVerdade()
+  }
+})
 
 gerarMatrizes()
+atualizarNavegacao()

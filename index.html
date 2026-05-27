@@ -3,114 +3,351 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Calculadora de Matrizes</title>
+    <title>Central de Cálculos</title>
   </head>
   <body>
     <div id="aviso" class="aviso" role="alert" aria-live="assertive"></div>
 
     <main class="app-container">
       <header class="page-header">
-        <h1>Calculadora de Matrizes</h1>
-        <p>Realize operações básicas entre matrizes de forma simples.</p>
+        <div class="header-copy">
+          <h1 id="titulo-pagina">Central de Cálculos</h1>
+          <p id="subtitulo-pagina">Escolha uma ferramenta para iniciar.</p>
+        </div>
+
+        <label class="theme-switch" title="Alternar tema escuro">
+          <input
+            id="tema-escuro"
+            class="theme-switch-input"
+            type="checkbox"
+            aria-label="Alternar tema escuro"
+          />
+          <span class="theme-switch-text">Tema</span>
+          <span class="theme-switch-track" aria-hidden="true">
+            <span class="theme-track-icon theme-sun"></span>
+            <span class="theme-track-icon theme-moon"></span>
+            <span class="theme-switch-knob">
+              <span class="knob-icon knob-icon-sun theme-sun"></span>
+              <span class="knob-icon knob-icon-moon theme-moon"></span>
+            </span>
+          </span>
+        </label>
       </header>
 
-      <section class="card">
-        <div class="card-header">
-          <h2>Dimensões</h2>
+      <nav class="app-nav" aria-label="Navegação principal">
+        <a class="nav-link" href="#home" data-page-link="home">Início</a>
+        <a class="nav-link" href="#matrizes" data-page-link="matrizes">Matrizes</a>
+        <a class="nav-link" href="#tabela-verdade" data-page-link="tabela-verdade">
+          Tabela Verdade
+        </a>
+      </nav>
+
+      <section id="home-page" class="app-page" data-page="home">
+        <div class="home-grid">
+          <article class="home-option">
+            <span class="option-kicker">Matemática Aplicada</span>
+            <h2>Calculadora de Matrizes</h2>
+            <p>Monte matrizes, valide dimensões e execute operações básicas.</p>
+            <a class="button button-primary option-button" href="#matrizes">Abrir ferramenta</a>
+          </article>
+
+          <article class="home-option">
+            <span class="option-kicker">Lógica matemática</span>
+            <h2>Tabela Verdade</h2>
+            <p>Gere combinações de valores lógicos para proposições compostas.</p>
+            <a class="button button-primary option-button" href="#tabela-verdade">
+              Abrir ferramenta
+            </a>
+          </article>
         </div>
-
-        <div class="dimensoes">
-          <fieldset class="dimension-group">
-            <legend>Matriz A</legend>
-
-            <div class="field-row">
-              <label for="linhas-a">Linhas</label>
-              <input id="linhas-a" type="number" min="1" value="2" />
-            </div>
-
-            <div class="field-row">
-              <label for="colunas-a">Colunas</label>
-              <input id="colunas-a" type="number" min="1" value="2" />
-            </div>
-          </fieldset>
-
-          <fieldset class="dimension-group">
-            <legend>Matriz B</legend>
-
-            <div class="field-row">
-              <label for="linhas-b">Linhas</label>
-              <input id="linhas-b" type="number" min="1" value="2" />
-            </div>
-
-            <div class="field-row">
-              <label for="colunas-b">Colunas</label>
-              <input id="colunas-b" type="number" min="1" value="2" />
-            </div>
-          </fieldset>
-        </div>
-
-        <button id="gerar-matrizes" class="button button-primary" type="button">
-          Gerar matrizes
-        </button>
       </section>
 
-      <section class="card">
-        <div class="card-header">
-          <h2>Matrizes</h2>
-        </div>
+      <section id="matrizes-page" class="app-page" data-page="matrizes" hidden>
+        <section class="card">
+          <div class="card-header">
+            <h2>Dimensões</h2>
+          </div>
 
-        <div class="matrizes">
-          <div class="matrix-panel">
-            <h3>Matriz A</h3>
-            <div class="matrix-scroll">
-              <div id="matriz-a"></div>
+          <div class="dimensoes">
+            <fieldset class="dimension-group">
+              <legend>Matriz A</legend>
+
+              <div class="field-row">
+                <label for="linhas-a">Linhas</label>
+                <input id="linhas-a" type="number" min="1" value="2" />
+              </div>
+
+              <div class="field-row">
+                <label for="colunas-a">Colunas</label>
+                <input id="colunas-a" type="number" min="1" value="2" />
+              </div>
+            </fieldset>
+
+            <fieldset class="dimension-group">
+              <legend>Matriz B</legend>
+
+              <div class="field-row">
+                <label for="linhas-b">Linhas</label>
+                <input id="linhas-b" type="number" min="1" value="2" />
+              </div>
+
+              <div class="field-row">
+                <label for="colunas-b">Colunas</label>
+                <input id="colunas-b" type="number" min="1" value="2" />
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="botoes">
+            <button id="gerar-matrizes" class="button button-primary" type="button">
+              Gerar matrizes
+            </button>
+            <button id="ajuda-matrizes" class="button button-help" type="button">
+              <span class="help-icon" aria-hidden="true">?</span>
+              Ajuda
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Matrizes</h2>
+          </div>
+
+          <div class="matrizes">
+            <div class="matrix-panel">
+              <h3>Matriz A</h3>
+              <div class="matrix-scroll">
+                <div id="matriz-a"></div>
+              </div>
+            </div>
+
+            <div class="matrix-panel">
+              <h3>Matriz B</h3>
+              <div class="matrix-scroll">
+                <div id="matriz-b"></div>
+              </div>
             </div>
           </div>
 
-          <div class="matrix-panel">
-            <h3>Matriz B</h3>
-            <div class="matrix-scroll">
-              <div id="matriz-b"></div>
+          <p id="observacao-dimensoes" class="observacao-dimensoes" aria-live="polite"></p>
+          <div id="acoes-observacao-matrizes" class="context-help-actions" hidden>
+            <button
+              id="saber-mais-observacao-matrizes"
+              class="button button-help"
+              type="button"
+            >
+              <span class="help-icon" aria-hidden="true">?</span>
+              Saiba mais
+            </button>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <h2>Operações</h2>
+          </div>
+
+          <div class="field-row scalar-field">
+            <label for="escalar">Escalar (k)</label>
+            <input id="escalar" type="number" value="1" />
+          </div>
+
+          <div class="botoes">
+            <button id="somar" class="button button-action" type="button">Somar</button>
+            <button id="subtrair" class="button button-action" type="button">Subtrair</button>
+            <button id="multiplicar-escalar" class="button button-action" type="button">
+              Multiplicar por escalar
+            </button>
+            <button id="multiplicar-matrizes" class="button button-action" type="button">
+              Multiplicar matrizes
+            </button>
+            <button id="limpar" class="button button-danger" type="button">Limpar</button>
+          </div>
+        </section>
+
+        <section class="card result-card">
+          <div class="card-header">
+            <h2>Resultado</h2>
+          </div>
+
+          <p id="mensagem-erro" class="erro"></p>
+          <div id="acoes-erro-matrizes" class="context-help-actions" hidden>
+            <button id="saber-mais-erro-matrizes" class="button button-help" type="button">
+              <span class="help-icon" aria-hidden="true">?</span>
+              Saiba mais
+            </button>
+          </div>
+
+          <div class="matrix-scroll">
+            <div id="resultado"></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="tabela-verdade-page" class="app-page" data-page="tabela-verdade" hidden>
+        <section class="card">
+          <div class="card-header">
+            <h2>Proposição lógica</h2>
+          </div>
+
+          <div class="truth-form">
+            <div class="field-row proposition-field">
+              <label for="proposicao-logica">Proposição</label>
+              <input
+                id="proposicao-logica"
+                type="text"
+                placeholder="Ex.: (p ∧ q) -> ~r"
+                autocomplete="off"
+              />
+              <p class="field-help">
+                Você pode digitar símbolos ou frases como "p e q", "não p" e "p implica q".
+              </p>
+            </div>
+
+            <div class="botoes">
+              <button id="gerar-tabela" class="button button-primary" type="button">
+                Gerar tabela
+              </button>
+              <button id="limpar-tabela" class="button button-danger" type="button">Limpar</button>
+              <button id="ajuda-tabela" class="button button-help" type="button">
+                <span class="help-icon" aria-hidden="true">?</span>
+                Ajuda
+              </button>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section class="card">
-        <div class="card-header">
-          <h2>Operações</h2>
-        </div>
+        <section class="card result-card">
+          <div class="card-header">
+            <h2>Resultado</h2>
+          </div>
 
-        <div class="field-row scalar-field">
-          <label for="escalar">Escalar (k)</label>
-          <input id="escalar" type="number" value="1" />
-        </div>
+          <p id="mensagem-tabela" class="erro"></p>
 
-        <div class="botoes">
-          <button id="somar" class="button button-action" type="button">Somar</button>
-          <button id="subtrair" class="button button-action" type="button">Subtrair</button>
-          <button id="multiplicar-escalar" class="button button-action" type="button">
-            Multiplicar por escalar
-          </button>
-          <button id="multiplicar-matrizes" class="button button-action" type="button">
-            Multiplicar matrizes
-          </button>
-          <button id="limpar" class="button button-clear" type="button">Limpar</button>
-        </div>
-      </section>
+          <div id="resumo-tabela" class="truth-summary" hidden>
+            <div class="summary-item">
+              <span>Linhas</span>
+              <strong id="total-linhas-tabela">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Colunas</span>
+              <strong id="total-colunas-tabela">0</strong>
+            </div>
+            <div class="summary-item">
+              <span>Variáveis</span>
+              <strong id="variaveis-tabela">0</strong>
+            </div>
+          </div>
 
-      <section class="card result-card">
-        <div class="card-header">
-          <h2>Resultado</h2>
-        </div>
-
-        <p id="mensagem-erro" class="erro"></p>
-
-        <div class="matrix-scroll">
-          <div id="resultado"></div>
-        </div>
+          <div class="matrix-scroll">
+            <div id="tabela-verdade-resultado"></div>
+          </div>
+        </section>
       </section>
     </main>
+
+    <div
+      id="ajuda-matrizes-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ajuda-matrizes-titulo"
+      hidden
+    >
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h2 id="ajuda-matrizes-titulo">Ajuda da Calculadora de Matrizes</h2>
+            <p id="ajuda-matrizes-subtitulo">Entenda as regras de cada operação.</p>
+          </div>
+          <button
+            id="fechar-ajuda-matrizes"
+            class="modal-close"
+            type="button"
+            aria-label="Fechar ajuda das matrizes"
+          >
+            ×
+          </button>
+        </div>
+
+        <div id="ajuda-matrizes-conteudo" class="matrix-help-content"></div>
+      </div>
+    </div>
+
+    <div
+      id="ajuda-modal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ajuda-titulo"
+      hidden
+    >
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <h2 id="ajuda-titulo">Ajuda da Tabela Verdade</h2>
+            <p>Use símbolos matemáticos ou escreva de forma mais natural.</p>
+          </div>
+          <button id="fechar-ajuda" class="modal-close" type="button" aria-label="Fechar ajuda">
+            ×
+          </button>
+        </div>
+
+        <div class="matrix-scroll">
+          <table class="help-table">
+            <thead>
+              <tr>
+                <th>Símbolo</th>
+                <th>Significado</th>
+                <th>Exemplo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>~</td>
+                <td>Negação</td>
+                <td>~p</td>
+              </tr>
+              <tr>
+                <td>∧</td>
+                <td>E lógico</td>
+                <td>p ∧ q</td>
+              </tr>
+              <tr>
+                <td>∨</td>
+                <td>OU lógico</td>
+                <td>p ∨ q</td>
+              </tr>
+              <tr>
+                <td>→</td>
+                <td>Condicional</td>
+                <td>p → q</td>
+              </tr>
+              <tr>
+                <td>↔</td>
+                <td>Bicondicional</td>
+                <td>p ↔ q</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="help-notes">
+          <h3>Como montar proposições</h3>
+          <p>
+            Use variáveis como p, q, r e s. Parênteses ajudam a deixar clara a ordem das
+            operações, principalmente em proposições compostas.
+          </p>
+          <div class="help-examples">
+            <span>(p ∧ q) → r</span>
+            <span>~p ∨ q</span>
+            <span>p e q</span>
+            <span>p implica q</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <script type="module" src="/src/main.js"></script>
   </body>
