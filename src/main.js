@@ -26,6 +26,8 @@ const tituloPagina = selecionar('#titulo-pagina')
 const subtituloPagina = selecionar('#subtitulo-pagina')
 const paginas = selecionarTodos('.app-page')
 const linksPagina = selecionarTodos('[data-page-link]')
+const menuToggleButton = selecionar('#menu-toggle')
+const appNav = selecionar('#app-nav')
 
 const gerarMatrizesButton = selecionar('#gerar-matrizes')
 const somarButton = selecionar('#somar')
@@ -197,6 +199,45 @@ function atualizarNavegacao() {
   tituloPagina.textContent = infoPagina.titulo
   subtituloPagina.textContent = infoPagina.subtitulo
   document.title = `${infoPagina.titulo} | Central de Cálculos`
+  fecharMenuMobile()
+}
+
+function definirMenuMobileAberto(aberto) {
+  if (!menuToggleButton || !appNav) {
+    return
+  }
+
+  appNav.classList.toggle('menu-open', aberto)
+  menuToggleButton.classList.toggle('menu-open', aberto)
+  menuToggleButton.setAttribute('aria-expanded', aberto ? 'true' : 'false')
+  menuToggleButton.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu')
+}
+
+function fecharMenuMobile() {
+  definirMenuMobileAberto(false)
+}
+
+function alternarMenuMobile() {
+  if (!appNav) {
+    return
+  }
+
+  definirMenuMobileAberto(!appNav.classList.contains('menu-open'))
+}
+
+function fecharMenuAoClicarFora(evento) {
+  if (
+    !appNav ||
+    !menuToggleButton ||
+    !appNav.classList.contains('menu-open') ||
+    !window.matchMedia('(max-width: 820px)').matches
+  ) {
+    return
+  }
+
+  if (!appNav.contains(evento.target) && !menuToggleButton.contains(evento.target)) {
+    fecharMenuMobile()
+  }
 }
 
 function lerNumeroInteiro(input) {
@@ -1006,28 +1047,43 @@ function normalizarEspacosProposicao(proposicao) {
 }
 
 function normalizarOperadoresLogicos(proposicao) {
-  return normalizarEspacosProposicao(proposicao)
+  const textoNormalizado = normalizarEspacosProposicao(proposicao)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[,;]/g, ' ')
     .replace(/<->/g, ' ↔ ')
     .replace(/->/g, ' → ')
-    .replace(/&&/g, ' ∧ ')
-    .replace(/\|\|/g, ' ∨ ')
+    .replace(/&&/g, ' ^ ')
+    .replace(/\|\|/g, ' v ')
+    .replace(/∧/g, ' ^ ')
+    .replace(/∨/g, ' v ')
     .replace(/!/g, ' ~ ')
     .replace(/\bse\s+e\s+somente\s+se\b/gi, ' ↔ ')
+    .replace(/\bse\s+somente\s+se\b/gi, ' ↔ ')
     .replace(/\bimplica\b/gi, ' → ')
     .replace(/\bentao\b/gi, ' → ')
+    .replace(/\bnegar\b/gi, ' ~ ')
     .replace(/\bnao\b/gi, ' ~ ')
     .replace(/\bnot\b/gi, ' ~ ')
-    .replace(/\band\b/gi, ' ∧ ')
-    .replace(/\be\b/gi, ' ∧ ')
-    .replace(/\bor\b/gi, ' ∨ ')
-    .replace(/\bou\b/gi, ' ∨ ')
-    .replace(/\s*([()~∧∨→↔])\s*/g, ' $1 ')
+    .replace(/\band\b/gi, ' ^ ')
+    .replace(/\be\b/gi, ' ^ ')
+    .replace(/\bor\b/gi, ' v ')
+    .replace(/\bou\b/gi, ' v ')
+    .replace(/\bv\b/gi, ' v ')
+    .replace(/\s*([()~^v→↔])\s*/g, ' $1 ')
+
+  const textoComEspacos = normalizarEspacosProposicao(textoNormalizado)
+
+  if (/^se\s+.+\s+→/.test(textoComEspacos)) {
+    return textoComEspacos.replace(/^se\s+/, '')
+  }
+
+  return textoComEspacos
 }
 
 function normalizarProposicao(proposicao) {
-  return normalizarEspacosProposicao(normalizarOperadoresLogicos(proposicao))
+  return normalizarEspacosProposicao(normalizarOperadoresLogicos(proposicao)).replace(/~\s+/g, '~')
 }
 
 function criarErroSintaxe(mensagem) {
@@ -1050,7 +1106,7 @@ function tokenizarProposicao(proposicao) {
       continue
     }
 
-    if ('()~∧∨→↔'.includes(caractere)) {
+    if ('()~^v→↔'.includes(caractere)) {
       tokens.push({ tipo: 'simbolo', valor: caractere })
       indice += 1
       continue
@@ -1072,11 +1128,11 @@ function tokenizarProposicao(proposicao) {
       }
 
       if (palavraNormalizada === 'and' || palavraNormalizada === 'e') {
-        throw criarErroSintaxe('Conectivo inválido. Para E, use ∧ ou &&.')
+        throw criarErroSintaxe('Conectivo inválido. Para E, use ^, ∧, && ou escreva "e".')
       }
 
       if (palavraNormalizada === 'or' || palavraNormalizada === 'ou') {
-        throw criarErroSintaxe('Conectivo inválido. Para OU, use ∨ ou ||.')
+        throw criarErroSintaxe('Conectivo inválido. Para OU, use v, ∨, || ou escreva "ou".')
       }
 
       if (palavraNormalizada.length > 1) {
@@ -1087,9 +1143,9 @@ function tokenizarProposicao(proposicao) {
       continue
     }
 
-    if ('&|-<>'.includes(caractere)) {
+    if ('&|-<>∧∨'.includes(caractere)) {
       throw criarErroSintaxe(
-        'Conectivo incompleto ou inválido. Use &&, ||, ->, <->, ∧, ∨, → ou ↔.',
+        'Conectivo incompleto ou inválido. Use ^, v, &&, ||, ->, <->, ∧, ∨, → ou ↔.',
       )
     }
 
@@ -1111,7 +1167,7 @@ function obterVariaveisProposicao(tokens) {
   return variaveis.sort()
 }
 
-// Parser recursivo com precedência: ~, ∧, ∨, → e ↔.
+// Parser recursivo com precedência: ~, ^, v, → e ↔.
 function criarParser(tokens) {
   let posicao = 0
 
@@ -1161,7 +1217,7 @@ function criarParser(tokens) {
   function analisarOu() {
     let no = analisarE()
 
-    while (consumir('∨')) {
+    while (consumir('v')) {
       no = criarNo('disjuncao', no, analisarE())
     }
 
@@ -1171,7 +1227,7 @@ function criarParser(tokens) {
   function analisarE() {
     let no = analisarNegacao()
 
-    while (consumir('∧')) {
+    while (consumir('^')) {
       no = criarNo('conjuncao', no, analisarNegacao())
     }
 
@@ -1190,7 +1246,9 @@ function criarParser(tokens) {
     const token = tokenAtual()
 
     if (!token) {
-      throw criarErroSintaxe('A proposição terminou antes do esperado.')
+      throw criarErroSintaxe(
+        'A proposição está incompleta. Confira se há uma variável depois do conectivo.',
+      )
     }
 
     if (token.tipo === 'variavel') {
@@ -1204,14 +1262,24 @@ function criarParser(tokens) {
       return no
     }
 
-    throw criarErroSintaxe(`Erro de sintaxe perto de "${token.valor}".`)
+    throw criarErroSintaxe(
+      `Erro de sintaxe perto de "${token.valor}". Verifique se há uma variável antes e depois do conectivo.`,
+    )
   }
 
   function analisar() {
     const arvore = analisarBicondicional()
 
     if (tokenAtual()) {
-      throw criarErroSintaxe(`Erro de sintaxe perto de "${tokenAtual().valor}".`)
+      const token = tokenAtual()
+
+      if (token.tipo === 'variavel') {
+        throw criarErroSintaxe(`Falta um conectivo antes de "${token.valor}". Use ^, v, → ou ↔.`)
+      }
+
+      throw criarErroSintaxe(
+        `Erro de sintaxe perto de "${token.valor}". Verifique se há uma variável antes e depois do conectivo.`,
+      )
     }
 
     return arvore
@@ -1469,12 +1537,23 @@ carregarIdentidadeVisual()
 aplicarTema(obterTemaInicial())
 
 window.addEventListener('hashchange', atualizarNavegacao)
+window.addEventListener('resize', () => {
+  if (window.matchMedia('(min-width: 821px)').matches) {
+    fecharMenuMobile()
+  }
+})
+document.addEventListener('click', fecharMenuAoClicarFora)
 document.addEventListener('keydown', (evento) => {
   if (evento.key === 'Escape') {
+    fecharMenuMobile()
     fecharAjudaMatrizes()
     fecharAjudaTabela()
   }
 })
+menuToggleButton.addEventListener('click', alternarMenuMobile)
+for (let i = 0; i < linksPagina.length; i++) {
+  linksPagina[i].addEventListener('click', fecharMenuMobile)
+}
 temaEscuroInput.addEventListener('change', alternarTema)
 gerarMatrizesButton.addEventListener('click', gerarMatrizes)
 somarButton.addEventListener('click', executarSoma)

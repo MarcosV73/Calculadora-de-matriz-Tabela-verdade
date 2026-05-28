@@ -40,7 +40,23 @@
         </label>
       </header>
 
-      <nav class="app-nav" aria-label="Navegação principal">
+      <button
+        id="menu-toggle"
+        class="nav-toggle"
+        type="button"
+        aria-controls="app-nav"
+        aria-expanded="false"
+        aria-label="Abrir menu"
+      >
+        <span class="nav-toggle-label">Menu</span>
+        <span class="nav-toggle-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
+      <nav id="app-nav" class="app-nav" aria-label="Navegação principal">
         <a class="nav-link" href="#home" data-page-link="home">Início</a>
         <a class="nav-link" href="#matrizes" data-page-link="matrizes">Matrizes</a>
         <a class="nav-link" href="#tabela-verdade" data-page-link="tabela-verdade">
@@ -203,11 +219,12 @@
               <input
                 id="proposicao-logica"
                 type="text"
-                placeholder="Ex.: (p ∧ q) -> ~r"
+                placeholder="Ex.: (p ^ q) -> ~r"
                 autocomplete="off"
               />
               <p class="field-help">
-                Você pode digitar símbolos ou frases como "p e q", "não p" e "p implica q".
+                Você pode digitar símbolos ou frases como "p e q", "não p", "p ou q" e
+                "p implica q".
               </p>
             </div>
 
@@ -300,40 +317,49 @@
           </button>
         </div>
 
-        <div class="matrix-scroll">
+        <div class="matrix-scroll help-table-scroll">
           <table class="help-table">
             <thead>
               <tr>
+                <th>Conectivo</th>
                 <th>Símbolo</th>
-                <th>Significado</th>
-                <th>Exemplo</th>
+                <th>Operação Lógica</th>
+                <th>Valor Lógico</th>
               </tr>
             </thead>
             <tbody>
               <tr>
+                <td>não</td>
                 <td>~</td>
-                <td>Negação</td>
-                <td>~p</td>
+                <td>negação</td>
+                <td>terá valor falso quando a proposição for verdadeira e vice-versa.</td>
               </tr>
               <tr>
-                <td>∧</td>
-                <td>E lógico</td>
-                <td>p ∧ q</td>
+                <td>e</td>
+                <td>^</td>
+                <td>conjunção</td>
+                <td>será verdadeira somente quando todas as proposições forem verdadeiras.</td>
               </tr>
               <tr>
-                <td>∨</td>
-                <td>OU lógico</td>
-                <td>p ∨ q</td>
+                <td>ou</td>
+                <td>v</td>
+                <td>disjunção</td>
+                <td>será verdadeira quando pelo menos uma das proposições for verdadeira.</td>
               </tr>
               <tr>
+                <td>se...então</td>
                 <td>→</td>
-                <td>Condicional</td>
-                <td>p → q</td>
+                <td>condicional</td>
+                <td>
+                  será falsa quando a proposição antecedente for verdadeira e a consequente for
+                  falsa.
+                </td>
               </tr>
               <tr>
+                <td>...se somente se...</td>
                 <td>↔</td>
-                <td>Bicondicional</td>
-                <td>p ↔ q</td>
+                <td>bicondicional</td>
+                <td>será verdadeira quando ambas as proposições forem verdadeiras ou ambas falsas.</td>
               </tr>
             </tbody>
           </table>
@@ -346,10 +372,12 @@
             operações, principalmente em proposições compostas.
           </p>
           <div class="help-examples">
-            <span>(p ∧ q) → r</span>
-            <span>~p ∨ q</span>
+            <span>(p ^ q) → r</span>
+            <span>~p v q</span>
             <span>p e q</span>
+            <span>se p então q</span>
             <span>p implica q</span>
+            <span>p se e somente se q</span>
           </div>
         </div>
       </div>
