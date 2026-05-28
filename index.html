@@ -247,6 +247,12 @@
           </div>
 
           <p id="mensagem-tabela" class="erro"></p>
+          <div id="acoes-erro-tabela" class="context-help-actions" hidden>
+            <button id="saber-mais-erro-tabela" class="button button-help" type="button">
+              <span class="help-icon" aria-hidden="true">?</span>
+              Saiba mais
+            </button>
+          </div>
 
           <div id="resumo-tabela" class="truth-summary" hidden>
             <div class="summary-item">
@@ -317,67 +323,71 @@
           </button>
         </div>
 
-        <div class="matrix-scroll help-table-scroll">
-          <table class="help-table">
-            <thead>
-              <tr>
-                <th>Conectivo</th>
-                <th>Símbolo</th>
-                <th>Operação Lógica</th>
-                <th>Valor Lógico</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>não</td>
-                <td>~</td>
-                <td>negação</td>
-                <td>terá valor falso quando a proposição for verdadeira e vice-versa.</td>
-              </tr>
-              <tr>
-                <td>e</td>
-                <td>^</td>
-                <td>conjunção</td>
-                <td>será verdadeira somente quando todas as proposições forem verdadeiras.</td>
-              </tr>
-              <tr>
-                <td>ou</td>
-                <td>v</td>
-                <td>disjunção</td>
-                <td>será verdadeira quando pelo menos uma das proposições for verdadeira.</td>
-              </tr>
-              <tr>
-                <td>se...então</td>
-                <td>→</td>
-                <td>condicional</td>
-                <td>
-                  será falsa quando a proposição antecedente for verdadeira e a consequente for
-                  falsa.
-                </td>
-              </tr>
-              <tr>
-                <td>...se somente se...</td>
-                <td>↔</td>
-                <td>bicondicional</td>
-                <td>será verdadeira quando ambas as proposições forem verdadeiras ou ambas falsas.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <div id="ajuda-tabela-conteudo" class="truth-help-content">
+          <div class="matrix-scroll help-table-scroll">
+            <table class="help-table">
+              <thead>
+                <tr>
+                  <th>Conectivo</th>
+                  <th>Símbolo</th>
+                  <th>Operação Lógica</th>
+                  <th>Valor Lógico</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>não</td>
+                  <td>~</td>
+                  <td>negação</td>
+                  <td>terá valor falso quando a proposição for verdadeira e vice-versa.</td>
+                </tr>
+                <tr>
+                  <td>e</td>
+                  <td>^</td>
+                  <td>conjunção</td>
+                  <td>será verdadeira somente quando todas as proposições forem verdadeiras.</td>
+                </tr>
+                <tr>
+                  <td>ou</td>
+                  <td>v</td>
+                  <td>disjunção</td>
+                  <td>será verdadeira quando pelo menos uma das proposições for verdadeira.</td>
+                </tr>
+                <tr>
+                  <td>se...então</td>
+                  <td>→</td>
+                  <td>condicional</td>
+                  <td>
+                    será falsa quando a proposição antecedente for verdadeira e a consequente for
+                    falsa.
+                  </td>
+                </tr>
+                <tr>
+                  <td>...se somente se...</td>
+                  <td>↔</td>
+                  <td>bicondicional</td>
+                  <td>
+                    será verdadeira quando ambas as proposições forem verdadeiras ou ambas falsas.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
-        <div class="help-notes">
-          <h3>Como montar proposições</h3>
-          <p>
-            Use variáveis como p, q, r e s. Parênteses ajudam a deixar clara a ordem das
-            operações, principalmente em proposições compostas.
-          </p>
-          <div class="help-examples">
-            <span>(p ^ q) → r</span>
-            <span>~p v q</span>
-            <span>p e q</span>
-            <span>se p então q</span>
-            <span>p implica q</span>
-            <span>p se e somente se q</span>
+          <div class="help-notes">
+            <h3>Como montar proposições</h3>
+            <p>
+              Use variáveis como p, q, r e s. Parênteses ajudam a deixar clara a ordem das
+              operações, principalmente em proposições compostas.
+            </p>
+            <div class="help-examples">
+              <span>(p ^ q) → r</span>
+              <span>~p v q</span>
+              <span>p e q</span>
+              <span>se p então q</span>
+              <span>p implica q</span>
+              <span>p se e somente se q</span>
+            </div>
           </div>
         </div>
       </div>

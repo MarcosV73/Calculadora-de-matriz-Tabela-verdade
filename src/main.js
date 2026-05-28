@@ -52,11 +52,21 @@ const ajudaTabelaButton = selecionar('#ajuda-tabela')
 const ajudaModal = selecionar('#ajuda-modal')
 const fecharAjudaButton = selecionar('#fechar-ajuda')
 const mensagemTabela = selecionar('#mensagem-tabela')
+const acoesErroTabela = selecionar('#acoes-erro-tabela')
+const saberMaisErroTabelaButton = selecionar('#saber-mais-erro-tabela')
+const ajudaTabelaTitulo = selecionar('#ajuda-titulo')
+const ajudaTabelaSubtitulo = selecionar('#ajuda-modal .modal-header p')
+const ajudaTabelaConteudo = selecionar('#ajuda-tabela-conteudo')
 const resumoTabela = selecionar('#resumo-tabela')
 const totalLinhasTabela = selecionar('#total-linhas-tabela')
 const totalColunasTabela = selecionar('#total-colunas-tabela')
 const variaveisTabela = selecionar('#variaveis-tabela')
 const tabelaVerdadeResultado = selecionar('#tabela-verdade-resultado')
+const ajudaTabelaPadrao = {
+  titulo: ajudaTabelaTitulo.textContent,
+  subtitulo: ajudaTabelaSubtitulo.textContent,
+  conteudo: ajudaTabelaConteudo.innerHTML,
+}
 const TEMA_STORAGE_KEY = 'calculadora-matrizes-tema'
 const TEMPO_MENSAGEM_ERRO = 5500
 const TEMPO_SAIDA_MENSAGEM = 260
@@ -81,6 +91,7 @@ const mensagemTimers = {}
 const modalTimers = {}
 let audioContext = null
 let contextoAjudaMatrizes = 'geral'
+let ajudaErroTabelaAtual = null
 
 function carregarIdentidadeVisual() {
   favicon.href = faviconMathLogicUrl
@@ -571,33 +582,6 @@ function criarTextoDimensoesAtuais() {
   return `Matriz A: ${formatarDimensao(dimensoes.linhasA, dimensoes.colunasA)}. Matriz B: ${formatarDimensao(dimensoes.linhasB, dimensoes.colunasB)}.`
 }
 
-function criarBlocoExemplosMatrizes() {
-  return `
-    <div class="matrix-help-examples">
-      <div class="matrix-example-card">
-        <h4>Soma possível</h4>
-        <div class="matrix-equation">
-          <span class="mini-matrix">1&nbsp;2<br />5&nbsp;6</span>
-          <span>+</span>
-          <span class="mini-matrix">3&nbsp;4<br />7&nbsp;8</span>
-          <span>=</span>
-          <span class="mini-matrix">4&nbsp;6<br />12&nbsp;14</span>
-        </div>
-        <p>As duas matrizes têm dimensão 2x2.</p>
-      </div>
-      <div class="matrix-example-card">
-        <h4>Exemplos de dimensões</h4>
-        <ul>
-          <li><strong>2x3 + 2x3</strong>: possível.</li>
-          <li><strong>2x3 + 3x2</strong>: impossível.</li>
-          <li><strong>2x3 × 3x2</strong>: possível.</li>
-          <li><strong>2x3 × 2x2</strong>: impossível.</li>
-        </ul>
-      </div>
-    </div>
-  `
-}
-
 function criarAjudaMatrizes(titulo, subtitulo, conteudo) {
   return { titulo, subtitulo, conteudo }
 }
@@ -611,13 +595,158 @@ function criarSecaoAjuda(titulo, texto) {
   `
 }
 
-function criarListaRegras(itens, compacta = false) {
-  const classe = compacta ? 'rule-list compact' : 'rule-list'
-  const regras = itens
-    .map((item) => `<div><strong>${item.titulo}</strong><span>${item.texto}</span></div>`)
+function criarTabelaAjudaMatrizes(titulo, cabecalhos, linhas) {
+  const cabecalhoTabela = cabecalhos.map((cabecalho) => `<th>${cabecalho}</th>`).join('')
+  const corpoTabela = linhas
+    .map(
+      (linha) => `
+        <tr>
+          ${linha.map((celula) => `<td>${celula}</td>`).join('')}
+        </tr>
+      `,
+    )
     .join('')
 
-  return `<div class="${classe}">${regras}</div>`
+  return `
+    <section class="help-notes matrix-help-table-section">
+      <h3>${titulo}</h3>
+      <div class="matrix-scroll help-table-scroll">
+        <table class="help-table matrix-info-table">
+          <thead>
+            <tr>${cabecalhoTabela}</tr>
+          </thead>
+          <tbody>
+            ${corpoTabela}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  `
+}
+
+function criarTabelaRegrasMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Regras das operações',
+    ['Tema', 'Regra', 'Como calcula', 'Exemplo'],
+    [
+      [
+        'Dimensão',
+        'É escrita como linhas × colunas.',
+        'Define quantas posições a matriz possui.',
+        '<strong>2x3</strong> tem 2 linhas e 3 colunas.',
+      ],
+      [
+        'Soma',
+        'A e B precisam ter a mesma dimensão.',
+        'Soma cada posição correspondente: aij + bij.',
+        '<strong>2x3 + 2x3</strong> gera uma matriz 2x3.',
+      ],
+      [
+        'Subtração',
+        'Usa a mesma regra da soma.',
+        'Subtrai cada posição correspondente: aij - bij.',
+        '<strong>3x1 - 3x1</strong> gera uma matriz 3x1.',
+      ],
+      [
+        'Escalar',
+        'Funciona para qualquer matriz válida.',
+        'Multiplica todos os elementos pelo número k.',
+        '<strong>k = 2</strong> transforma 1, 3 em 2, 6.',
+      ],
+      [
+        'A × B',
+        'As colunas de A devem ser iguais às linhas de B.',
+        'Cada célula combina uma linha de A com uma coluna de B.',
+        '<strong>2x3 × 3x4</strong> gera uma matriz 2x4.',
+      ],
+      [
+        'Ordem',
+        'Em geral, A × B e B × A não são a mesma operação.',
+        'A ordem pode mudar a dimensão ou bloquear a conta.',
+        '<strong>2x3 × 3x2</strong> e <strong>3x2 × 2x3</strong> geram tamanhos diferentes.',
+      ],
+    ],
+  )
+}
+
+function criarTabelaExemplosMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Exemplos rápidos',
+    ['Operação', 'Exemplo', 'Status', 'Por quê'],
+    [
+      ['Soma', '2x2 + 2x2', 'Possível', 'As duas matrizes têm exatamente o mesmo tamanho.'],
+      ['Soma', '2x3 + 3x2', 'Impossível', 'As quantidades de linhas e colunas não coincidem.'],
+      ['Subtração', '4x1 - 4x1', 'Possível', 'Cada elemento tem uma posição correspondente.'],
+      ['Escalar', '5 × matriz 3x2', 'Possível', 'O número multiplica todos os elementos da matriz.'],
+      ['A × B', '2x3 × 3x2', 'Possível', 'As 3 colunas de A combinam com as 3 linhas de B.'],
+      ['A × B', '2x3 × 2x2', 'Impossível', 'As 3 colunas de A não combinam com as 2 linhas de B.'],
+    ],
+  )
+}
+
+function criarTabelaSomaSubtracaoMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Soma e subtração',
+    ['Caso', 'Dimensões', 'Status', 'Detalhe'],
+    [
+      ['A + B', '2x3 e 2x3', 'Possível', 'O resultado também terá dimensão 2x3.'],
+      ['A - B', '3x2 e 3x2', 'Possível', 'Cada elemento de A é combinado com o elemento na mesma posição de B.'],
+      ['A + B', '2x3 e 3x2', 'Impossível', 'Mesmo tendo 6 elementos, as posições não formam o mesmo desenho.'],
+      ['A - B', '2x2 e 2x3', 'Impossível', 'A Matriz B tem uma coluna extra.'],
+      [
+        'Célula',
+        'mesma linha e mesma coluna',
+        'Como calcular',
+        'Na soma, c12 = a12 + b12. Na subtração, c12 = a12 - b12.',
+      ],
+    ],
+  )
+}
+
+function criarTabelaMultiplicacaoMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Multiplicação entre matrizes',
+    ['Caso', 'Regra aplicada', 'Status', 'Resultado'],
+    [
+      ['2x3 × 3x2', '3 colunas em A = 3 linhas em B', 'Possível', 'A matriz final terá dimensão 2x2.'],
+      ['3x2 × 2x4', '2 colunas em A = 2 linhas em B', 'Possível', 'A matriz final terá dimensão 3x4.'],
+      ['2x3 × 2x2', '3 colunas em A ≠ 2 linhas em B', 'Impossível', 'Ajuste colunas de A ou linhas de B.'],
+      ['4x1 × 1x3', '1 coluna em A = 1 linha em B', 'Possível', 'A matriz final terá dimensão 4x3.'],
+      [
+        'Célula',
+        'linha de A com coluna de B',
+        'Como calcular',
+        'Cada célula é a soma dos produtos dos pares correspondentes.',
+      ],
+    ],
+  )
+}
+
+function criarTabelaEscalarMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Multiplicação por escalar',
+    ['Item', 'Regra', 'Exemplo', 'Observação'],
+    [
+      ['Escalar k', 'É o número escolhido no campo Escalar.', 'k = 2', 'Pode ser positivo, negativo, zero ou decimal.'],
+      ['Elemento', 'Cada entrada da matriz é multiplicada por k.', '2 × 5 = 10', 'A conta é feita posição por posição.'],
+      ['Dimensão', 'Não muda depois da multiplicação.', '2 × matriz 3x2', 'O resultado continua sendo 3x2.'],
+      ['Zero', 'Se k = 0, todos os elementos viram 0.', '0 × matriz A', 'A dimensão continua a mesma.'],
+      ['Negativo', 'Se k < 0, os sinais dos elementos podem inverter.', '-1 × 4 = -4', 'Útil para obter a matriz oposta.'],
+    ],
+  )
+}
+
+function criarTabelaRegrasFalhasMatrizes() {
+  return criarTabelaAjudaMatrizes(
+    'Como corrigir as dimensões',
+    ['Operação', 'Precisa de', 'Quando falha', 'Correção'],
+    [
+      ['Soma', 'A e B com mesmas linhas e colunas.', '2x3 com 3x2.', 'Deixe as duas matrizes como 2x3, 3x2 ou outro tamanho igual.'],
+      ['Subtração', 'A e B com o mesmo tamanho.', '2x2 com 2x3.', 'Ajuste linhas e colunas para coincidirem.'],
+      ['A × B', 'Colunas de A iguais às linhas de B.', 'A é 2x3 e B é 2x2.', 'Troque B para 3 linhas ou A para 2 colunas.'],
+      ['Escalar', 'Matrizes com pelo menos 1 linha e 1 coluna.', 'Dimensão vazia ou menor que 1.', 'Use valores inteiros maiores ou iguais a 1.'],
+    ],
+  )
 }
 
 function criarConteudosAjudaMatrizes(dimensoesAtuais) {
@@ -630,28 +759,8 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'O que é uma matriz',
           'Uma matriz é uma tabela de números organizada em linhas e colunas. A dimensão 2x3, por exemplo, significa 2 linhas e 3 colunas.',
         )}
-        <section class="help-notes">
-          <h3>Regras das operações</h3>
-          ${criarListaRegras([
-            {
-              titulo: 'Soma',
-              texto: 'As duas matrizes precisam ter exatamente as mesmas dimensões.',
-            },
-            {
-              titulo: 'Subtração',
-              texto: 'Também exige o mesmo número de linhas e colunas.',
-            },
-            {
-              titulo: 'Multiplicação por escalar',
-              texto: 'Sempre é possível: cada elemento é multiplicado pelo número escolhido.',
-            },
-            {
-              titulo: 'Multiplicação entre matrizes',
-              texto: 'O número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.',
-            },
-          ])}
-        </section>
-        ${criarBlocoExemplosMatrizes()}
+        ${criarTabelaRegrasMatrizes()}
+        ${criarTabelaExemplosMatrizes()}
       `,
     ),
     'soma-subtracao': criarAjudaMatrizes(
@@ -662,19 +771,7 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'Regra da soma e da subtração',
           'Para somar ou subtrair matrizes, elas precisam ter exatamente o mesmo número de linhas e colunas. Cada posição da Matriz A é combinada com a mesma posição da Matriz B.',
         )}
-        ${criarListaRegras(
-          [
-            {
-              titulo: '2x3 + 2x3',
-              texto: 'Possível, porque as dimensões são iguais.',
-            },
-            {
-              titulo: '2x3 + 3x2',
-              texto: 'Impossível, porque as dimensões são diferentes.',
-            },
-          ],
-          true,
-        )}
+        ${criarTabelaSomaSubtracaoMatrizes()}
       `,
     ),
     soma: criarAjudaMatrizes(
@@ -685,7 +782,7 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'Regra da soma',
           'A soma só existe quando as duas matrizes têm as mesmas dimensões. Corrija as linhas e colunas para que Matriz A e Matriz B fiquem iguais.',
         )}
-        ${criarBlocoExemplosMatrizes()}
+        ${criarTabelaSomaSubtracaoMatrizes()}
       `,
     ),
     subtracao: criarAjudaMatrizes(
@@ -696,13 +793,7 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'Regra da subtração',
           'A subtração segue a mesma regra da soma: as matrizes precisam ter o mesmo número de linhas e colunas.',
         )}
-        ${criarListaRegras(
-          [
-            { titulo: '2x2 - 2x2', texto: 'Possível.' },
-            { titulo: '2x4 - 4x2', texto: 'Impossível.' },
-          ],
-          true,
-        )}
+        ${criarTabelaSomaSubtracaoMatrizes()}
       `,
     ),
     multiplicacao: criarAjudaMatrizes(
@@ -713,19 +804,7 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'Regra da multiplicação entre matrizes',
           'Para multiplicar A × B, o número de colunas da Matriz A deve ser igual ao número de linhas da Matriz B.',
         )}
-        ${criarListaRegras(
-          [
-            {
-              titulo: '2x3 × 3x2',
-              texto: 'Possível, porque 3 colunas em A combinam com 3 linhas em B.',
-            },
-            {
-              titulo: '2x3 × 2x2',
-              texto: 'Impossível, porque 3 é diferente de 2.',
-            },
-          ],
-          true,
-        )}
+        ${criarTabelaMultiplicacaoMatrizes()}
       `,
     ),
     escalar: criarAjudaMatrizes(
@@ -736,12 +815,7 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'Como funciona',
           'Multiplicar por escalar significa multiplicar todos os elementos da matriz por um número real.',
         )}
-        <div class="matrix-equation single">
-          <span>2 ×</span>
-          <span class="mini-matrix">1&nbsp;3<br />4&nbsp;5</span>
-          <span>=</span>
-          <span class="mini-matrix">2&nbsp;6<br />8&nbsp;10</span>
-        </div>
+        ${criarTabelaEscalarMatrizes()}
       `,
     ),
     regras: criarAjudaMatrizes(
@@ -752,7 +826,8 @@ function criarConteudosAjudaMatrizes(dimensoesAtuais) {
           'As dimensões atuais bloqueiam mais de uma operação',
           'Para somar ou subtrair, as dimensões precisam ser iguais. Para multiplicar A × B, as colunas de A precisam coincidir com as linhas de B.',
         )}
-        ${criarBlocoExemplosMatrizes()}
+        ${criarTabelaRegrasFalhasMatrizes()}
+        ${criarTabelaExemplosMatrizes()}
       `,
     ),
   }
@@ -795,22 +870,35 @@ function gerarInputsMatriz(container, nomeMatriz, linhas, colunas) {
   container.appendChild(tabela)
 }
 
-function gerarMatrizes() {
+function gerarMatrizes(opcoes = {}) {
+  const exibirObservacao = opcoes.exibirObservacao !== false
   const linhasA = lerNumeroInteiro(linhasAInput)
   const colunasA = lerNumeroInteiro(colunasAInput)
   const linhasB = lerNumeroInteiro(linhasBInput)
   const colunasB = lerNumeroInteiro(colunasBInput)
 
   if (!dimensaoValida(linhasA, colunasA) || !dimensaoValida(linhasB, colunasB)) {
-    definirObservacaoDimensoes('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
-    mostrarErro('As matrizes precisam ter pelo menos 1 linha e 1 coluna.', false)
+    if (exibirObservacao) {
+      definirObservacaoDimensoes('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
+      mostrarErro('As matrizes precisam ter pelo menos 1 linha e 1 coluna.', false)
+      return
+    }
+
+    limparObservacaoDimensoes()
+    limparMensagemEResultado()
     return
   }
 
   gerarInputsMatriz(matrizAContainer, 'A', linhasA, colunasA)
   gerarInputsMatriz(matrizBContainer, 'B', linhasB, colunasB)
   limparMensagemEResultado()
-  atualizarObservacaoDimensoes()
+
+  if (exibirObservacao) {
+    atualizarObservacaoDimensoes()
+    return
+  }
+
+  limparObservacaoDimensoes()
 }
 
 // Lê os valores dos inputs e transforma tudo em um array de arrays.
@@ -1387,12 +1475,184 @@ function criarCelulaValor(valor) {
   return celula
 }
 
+function escaparHtml(texto) {
+  return String(texto)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
+function criarTabelaDetalhesErroTabela(linhas) {
+  const linhasTabela = linhas
+    .map(
+      (linha) => `
+        <tr>
+          <td>${linha.item}</td>
+          <td>${linha.detalhe}</td>
+        </tr>
+      `,
+    )
+    .join('')
+
+  return `
+    <div class="matrix-scroll help-table-scroll">
+      <table class="help-table truth-error-table">
+        <thead>
+          <tr>
+            <th>Parte</th>
+            <th>Explicação</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${linhasTabela}
+        </tbody>
+      </table>
+    </div>
+  `
+}
+
+function obterDetalhesErroTabela(mensagem) {
+  if (mensagem.includes('Digite uma proposição')) {
+    return {
+      causa: 'O campo da proposição está vazio, então não há variáveis nem conectivos para montar a tabela.',
+      correcao: 'Digite pelo menos uma variável, como p, ou uma proposição composta, como p ^ q.',
+      exemplos: 'p, ~p, p v q, (p ^ q) → r.',
+    }
+  }
+
+  if (mensagem.includes('Use variáveis com apenas uma letra')) {
+    return {
+      causa: 'A calculadora trata cada variável como uma única letra. Palavras como hoje, chuva ou verdadeiro são lidas como variáveis longas.',
+      correcao: 'Troque cada proposição simples por uma letra, por exemplo p para "chove" e q para "faz frio".',
+      exemplos: 'Use p ^ q em vez de chuva e frio.',
+    }
+  }
+
+  if (mensagem.includes('máximo 8 variáveis')) {
+    return {
+      causa: 'A tabela cresce em potência de 2. Com mais de 8 variáveis, ela fica grande demais para ler bem na tela.',
+      correcao: 'Reduza a expressão para no máximo 8 letras diferentes ou divida a análise em partes menores.',
+      exemplos: 'Com 8 variáveis a tabela já possui 256 linhas.',
+    }
+  }
+
+  if (mensagem.includes('incompleta')) {
+    return {
+      causa: 'A proposição terminou logo depois de um conectivo ou de uma negação.',
+      correcao: 'Complete a expressão colocando uma variável depois do último símbolo.',
+      exemplos: 'p ^ q em vez de p ^. Use ~p em vez de apenas ~.',
+    }
+  }
+
+  if (mensagem.includes('Feche os parênteses')) {
+    return {
+      causa: 'Existe um parêntese de abertura sem o parêntese de fechamento correspondente.',
+      correcao: 'Confira cada "(" e feche o bloco com ")".',
+      exemplos: '(p ^ q) → r em vez de (p ^ q → r.',
+    }
+  }
+
+  if (mensagem.includes('Falta um conectivo')) {
+    return {
+      causa: 'Duas variáveis ficaram lado a lado sem uma operação lógica entre elas.',
+      correcao: 'Coloque um conectivo entre as variáveis: ^ para E, v para OU, → para implica ou ↔ para bicondicional.',
+      exemplos: 'p ^ q em vez de p q.',
+    }
+  }
+
+  if (mensagem.includes('Caractere inválido')) {
+    return {
+      causa: 'A expressão contém um símbolo que a calculadora não reconhece como variável, parêntese ou conectivo lógico.',
+      correcao: 'Use letras para variáveis e conectivos válidos: ~, ^, v, ->, <->, ∧, ∨, → ou ↔.',
+      exemplos: '(p ^ q) -> ~r.',
+    }
+  }
+
+  if (mensagem.includes('Conectivo incompleto') || mensagem.includes('Conectivo inválido')) {
+    return {
+      causa: 'Algum conectivo foi digitado incompleto ou em uma forma que não fecha uma operação lógica válida.',
+      correcao: 'Use os símbolos completos: && ou ^ para E, || ou v para OU, -> para condicional e <-> para bicondicional.',
+      exemplos: 'p -> q em vez de p - q. p <-> q em vez de p <> q.',
+    }
+  }
+
+  if (mensagem.includes('Erro de sintaxe perto')) {
+    return {
+      causa: 'O parser encontrou um símbolo em uma posição onde esperava uma variável ou uma subproposição.',
+      correcao: 'Confira se há variável antes e depois de cada conectivo e se os parênteses estão envolvendo expressões completas.',
+      exemplos: '(p ^ q) v r em vez de p ^ v q.',
+    }
+  }
+
+  if (mensagem.includes('ao menos uma variável')) {
+    return {
+      causa: 'A expressão tem símbolos, mas nenhuma variável lógica como p, q, r ou s.',
+      correcao: 'Inclua pelo menos uma letra para representar a proposição que será avaliada.',
+      exemplos: 'p, ~p ou p → q.',
+    }
+  }
+
+  return {
+    causa: 'A proposição não pôde ser interpretada pelas regras sintáticas da Tabela Verdade.',
+    correcao: 'Revise variáveis, conectivos e parênteses, deixando cada conectivo com uma proposição antes e outra depois.',
+    exemplos: '(p ^ q) → r, ~p v q, p ↔ q.',
+  }
+}
+
+function criarAjudaErroTabela(mensagem, proposicao) {
+  const detalhes = obterDetalhesErroTabela(mensagem)
+  const entrada = proposicao ? escaparHtml(proposicao) : 'campo vazio'
+  const mensagemSegura = escaparHtml(mensagem)
+
+  return {
+    titulo: 'Por que a Tabela Verdade não foi gerada?',
+    subtitulo: 'A mensagem abaixo mostra o erro específico encontrado na proposição.',
+    conteudo: `
+      <section class="help-notes">
+        <h3>O que não deu certo</h3>
+        <p>${mensagemSegura}</p>
+      </section>
+
+      ${criarTabelaDetalhesErroTabela([
+        {
+          item: 'Entrada',
+          detalhe: `<strong>${entrada}</strong>`,
+        },
+        {
+          item: 'Causa',
+          detalhe: detalhes.causa,
+        },
+        {
+          item: 'Como corrigir',
+          detalhe: detalhes.correcao,
+        },
+        {
+          item: 'Exemplos válidos',
+          detalhe: detalhes.exemplos,
+        },
+      ])}
+
+      <section class="help-notes">
+        <h3>Regra geral</h3>
+        <p>
+          Uma proposição válida alterna variáveis e conectivos. A negação (~) vem antes de uma
+          variável ou de um bloco com parênteses, como ~p ou ~(p v q).
+        </p>
+      </section>
+    `,
+  }
+}
+
 function limparErroTabela() {
   mensagemTabela.textContent = ''
+  acoesErroTabela.hidden = true
+  ajudaErroTabelaAtual = null
 }
 
 function renderizarTabelaVerdade(tabela) {
-  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
   limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = false
@@ -1435,33 +1695,35 @@ function renderizarTabelaVerdade(tabela) {
   mostrarAviso('Tabela verdade gerada com sucesso.', 'sucesso')
 }
 
-function mostrarErroTabela(mensagem) {
-  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
+function mostrarErroTabela(mensagem, proposicao = '') {
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
   mensagemTabela.textContent = mensagem
-  agendarMensagemTemporaria('erro-tabela', mensagemTabela, limparErroTabela)
-  mostrarAviso(mensagem)
+  ajudaErroTabelaAtual = criarAjudaErroTabela(mensagem, proposicao)
+  acoesErroTabela.hidden = false
+  agendarMensagemTemporaria('erro-tabela', mensagemTabela, limparErroTabela, acoesErroTabela)
+  mostrarAviso('Operação impossível de ser realizada.')
 }
 
 function executarTabelaVerdade() {
   const proposicao = proposicaoInput.value.trim()
 
   if (!proposicao) {
-    mostrarErroTabela('Digite uma proposição lógica para gerar a tabela verdade.')
+    mostrarErroTabela('Digite uma proposição lógica para gerar a tabela verdade.', proposicao)
     return
   }
 
   try {
     renderizarTabelaVerdade(gerarTabelaVerdade(proposicao))
   } catch (erro) {
-    mostrarErroTabela(erro.message || 'Não foi possível interpretar a proposição.')
+    mostrarErroTabela(erro.message || 'Não foi possível interpretar a proposição.', proposicao)
   }
 }
 
 function limparTabelaVerdade() {
   proposicaoInput.value = ''
-  cancelarMensagemTemporaria('erro-tabela', mensagemTabela)
+  cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
   limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
@@ -1514,7 +1776,30 @@ function fecharAjudaMatrizes() {
   fecharModal(ajudaMatrizesModal)
 }
 
-function abrirAjudaTabela() {
+function renderizarAjudaTabelaGeral() {
+  ajudaTabelaTitulo.textContent = ajudaTabelaPadrao.titulo
+  ajudaTabelaSubtitulo.textContent = ajudaTabelaPadrao.subtitulo
+  ajudaTabelaConteudo.innerHTML = ajudaTabelaPadrao.conteudo
+}
+
+function renderizarAjudaTabelaErro() {
+  const ajuda = ajudaErroTabelaAtual || criarAjudaErroTabela(
+    'Não foi possível interpretar a proposição.',
+    proposicaoInput.value.trim(),
+  )
+
+  ajudaTabelaTitulo.textContent = ajuda.titulo
+  ajudaTabelaSubtitulo.textContent = ajuda.subtitulo
+  ajudaTabelaConteudo.innerHTML = ajuda.conteudo
+}
+
+function abrirAjudaTabela(contexto = 'geral') {
+  if (contexto === 'erro') {
+    renderizarAjudaTabelaErro()
+  } else {
+    renderizarAjudaTabelaGeral()
+  }
+
   abrirModal(ajudaModal, fecharAjudaButton)
 }
 
@@ -1575,6 +1860,7 @@ ajudaMatrizesModal.addEventListener('click', (evento) => {
 gerarTabelaButton.addEventListener('click', executarTabelaVerdade)
 limparTabelaButton.addEventListener('click', limparTabelaVerdade)
 ajudaTabelaButton.addEventListener('click', abrirAjudaTabela)
+saberMaisErroTabelaButton.addEventListener('click', () => abrirAjudaTabela('erro'))
 fecharAjudaButton.addEventListener('click', fecharAjudaTabela)
 ajudaModal.addEventListener('click', (evento) => {
   fecharModalAoClicarFora(evento, ajudaModal, fecharAjudaTabela)
@@ -1586,5 +1872,5 @@ proposicaoInput.addEventListener('keydown', (evento) => {
   }
 })
 
-gerarMatrizes()
+gerarMatrizes({ exibirObservacao: false })
 atualizarNavegacao()

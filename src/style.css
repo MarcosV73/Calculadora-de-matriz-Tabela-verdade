@@ -1373,6 +1373,77 @@ input[type='search'] {
   border-bottom: 0;
 }
 
+.matrix-help-content .help-notes {
+  margin-top: 0;
+}
+
+.matrix-help-table-section {
+  display: grid;
+  gap: 12px;
+}
+
+.matrix-info-table {
+  min-width: 760px;
+}
+
+.matrix-info-table th:nth-child(-n + 3),
+.matrix-info-table td:nth-child(-n + 3),
+.matrix-info-table th:last-child,
+.matrix-info-table td:last-child {
+  text-align: left;
+}
+
+.matrix-info-table td:nth-child(-n + 3) {
+  font-weight: 400;
+}
+
+.matrix-info-table th:first-child,
+.matrix-info-table td:first-child {
+  text-align: center;
+}
+
+.matrix-info-table td:first-child,
+.matrix-info-table strong {
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.truth-help-content {
+  display: grid;
+  gap: 18px;
+}
+
+.truth-help-content .help-notes {
+  margin-top: 0;
+}
+
+.truth-error-table {
+  min-width: 560px;
+}
+
+.truth-error-table th,
+.truth-error-table td,
+.truth-error-table th:nth-child(-n + 3),
+.truth-error-table td:nth-child(-n + 3),
+.truth-error-table th:last-child,
+.truth-error-table td:last-child {
+  text-align: left;
+}
+
+.truth-error-table td:nth-child(-n + 3) {
+  font-weight: 400;
+}
+
+.truth-error-table td:first-child {
+  width: 150px;
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.truth-error-table strong {
+  color: var(--heading);
+}
+
 .help-notes {
   margin-top: 18px;
   padding: 16px;
