@@ -15,6 +15,7 @@ const escalarInput = selecionar('#escalar')
 const matrizAContainer = selecionar('#matriz-a')
 const matrizBContainer = selecionar('#matriz-b')
 const resultadoContainer = selecionar('#resultado')
+const resultadoMatrizesCard = selecionar('#resultado-matrizes-card')
 const mensagemErro = selecionar('#mensagem-erro')
 const observacaoDimensoes = selecionar('#observacao-dimensoes')
 const aviso = selecionar('#aviso')
@@ -62,6 +63,7 @@ const totalLinhasTabela = selecionar('#total-linhas-tabela')
 const totalColunasTabela = selecionar('#total-colunas-tabela')
 const variaveisTabela = selecionar('#variaveis-tabela')
 const tabelaVerdadeResultado = selecionar('#tabela-verdade-resultado')
+const resultadoTabelaCard = selecionar('#resultado-tabela-card')
 const ajudaTabelaPadrao = {
   titulo: ajudaTabelaTitulo.textContent,
   subtitulo: ajudaTabelaSubtitulo.textContent,
@@ -880,7 +882,7 @@ function gerarMatrizes(opcoes = {}) {
   if (!dimensaoValida(linhasA, colunasA) || !dimensaoValida(linhasB, colunasB)) {
     if (exibirObservacao) {
       definirObservacaoDimensoes('As matrizes precisam ter pelo menos 1 linha e 1 coluna.')
-      mostrarErro('As matrizes precisam ter pelo menos 1 linha e 1 coluna.', false)
+      limparMensagemEResultado()
       return
     }
 
@@ -997,12 +999,17 @@ function multiplicarMatrizes(matrizA, matrizB) {
 function limparErroMatriz() {
   mensagemErro.textContent = ''
   atualizarAcaoErroMatrizes('')
+
+  if (!resultadoContainer.children.length) {
+    resultadoMatrizesCard.hidden = true
+  }
 }
 
 function renderizarResultado(matriz) {
   cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
   limparErroMatriz()
   resultadoContainer.innerHTML = ''
+  resultadoMatrizesCard.hidden = false
 
   const tabela = document.createElement('table')
   tabela.classList.add('matrix-grid', 'resultado-grid')
@@ -1026,6 +1033,7 @@ function renderizarResultado(matriz) {
 function mostrarErro(mensagem, exibirPopup = true, contextoAjuda = '') {
   cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
   resultadoContainer.innerHTML = ''
+  resultadoMatrizesCard.hidden = false
   mensagemErro.textContent = mensagem || 'Operação impossível'
   atualizarAcaoErroMatrizes(contextoAjuda)
   agendarMensagemTemporaria('erro-matriz', mensagemErro, limparErroMatriz, acoesErroMatrizes)
@@ -1040,8 +1048,8 @@ function mostrarErro(mensagem, exibirPopup = true, contextoAjuda = '') {
 
 function limparMensagemEResultado() {
   cancelarMensagemTemporaria('erro-matriz', mensagemErro, acoesErroMatrizes)
-  limparErroMatriz()
   resultadoContainer.innerHTML = ''
+  limparErroMatriz()
 }
 
 function possuemMesmasDimensoes(matrizA, matrizB) {
@@ -1649,12 +1657,17 @@ function limparErroTabela() {
   mensagemTabela.textContent = ''
   acoesErroTabela.hidden = true
   ajudaErroTabelaAtual = null
+
+  if (!tabelaVerdadeResultado.children.length && resumoTabela.hidden) {
+    resultadoTabelaCard.hidden = true
+  }
 }
 
 function renderizarTabelaVerdade(tabela) {
   cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
   limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
+  resultadoTabelaCard.hidden = false
   resumoTabela.hidden = false
   totalLinhasTabela.textContent = tabela.totalLinhas
   totalColunasTabela.textContent = tabela.totalColunas
@@ -1699,6 +1712,7 @@ function mostrarErroTabela(mensagem, proposicao = '') {
   cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
+  resultadoTabelaCard.hidden = false
   mensagemTabela.textContent = mensagem
   ajudaErroTabelaAtual = criarAjudaErroTabela(mensagem, proposicao)
   acoesErroTabela.hidden = false
@@ -1724,9 +1738,9 @@ function executarTabelaVerdade() {
 function limparTabelaVerdade() {
   proposicaoInput.value = ''
   cancelarMensagemTemporaria('erro-tabela', mensagemTabela, acoesErroTabela)
-  limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resumoTabela.hidden = true
+  limparErroTabela()
   esconderAviso()
 }
 

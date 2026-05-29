@@ -153,28 +153,32 @@ a:hover {
 .app-container {
   width: min(1120px, calc(100% - 32px));
   margin: 0 auto;
-  padding: 32px 0;
+  padding: 24px 0 32px;
 }
 
 .page-header {
+  position: relative;
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 24px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  text-align: center;
 }
 
 .brand-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
   min-width: 0;
-  gap: 18px;
+  gap: 14px;
   animation: aparecerLogo 420ms ease both;
 }
 
 .brand-logo {
-  width: clamp(170px, 22vw, 260px);
-  max-height: 86px;
+  width: clamp(260px, 34vw, 420px);
+  max-height: 150px;
   flex: 0 0 auto;
   object-fit: contain;
   filter: drop-shadow(0 0 14px var(--brand-glow));
@@ -199,13 +203,13 @@ a:hover {
 
 .page-header h1 {
   margin: 0;
-  font-size: 34px;
+  font-size: clamp(32px, 4vw, 46px);
   line-height: 1.2;
   color: var(--heading);
 }
 
 .page-header p {
-  margin: 8px 0 0;
+  margin: 14px 0 0;
   color: var(--muted);
   font-size: 16px;
 }
@@ -213,8 +217,9 @@ a:hover {
 .app-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  margin: 0 0 18px;
+  justify-content: center;
+  gap: 14px;
+  margin: 0 0 28px;
 }
 
 .nav-toggle {
@@ -561,6 +566,9 @@ input:focus {
 }
 
 .theme-switch {
+  position: absolute;
+  top: 0;
+  right: 0;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -1654,10 +1662,8 @@ input[type='search'] {
   }
 
   .page-header {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 14px;
+    margin-bottom: 22px;
   }
 
   .brand-header {
@@ -1667,26 +1673,28 @@ input[type='search'] {
   }
 
   .brand-logo {
-    width: 150px;
-    max-height: 62px;
+    width: min(320px, 84vw);
+    max-height: 124px;
   }
 
   .header-copy {
-    flex: 1 1 auto;
+    width: 100%;
   }
 
   .page-header h1 {
-    font-size: 28px;
+    font-size: 32px;
     overflow-wrap: anywhere;
   }
 
   .page-header p {
+    margin-top: 12px;
     font-size: 14px;
     line-height: 1.4;
   }
 
   .theme-switch {
-    align-self: flex-start;
+    position: static;
+    align-self: center;
     min-height: 44px;
     margin-top: 0;
   }
@@ -1698,9 +1706,9 @@ input[type='search'] {
   .app-nav {
     flex-direction: column;
     flex-wrap: nowrap;
-    gap: 8px;
+    gap: 10px;
     max-height: 0;
-    margin: 0 0 16px;
+    margin: 0 0 20px;
     overflow: hidden;
     opacity: 0;
     pointer-events: none;
@@ -1890,16 +1898,16 @@ input[type='search'] {
   }
 
   .brand-header {
-    align-items: flex-start;
+    align-items: center;
   }
 
   .brand-logo {
-    width: 132px;
-    max-height: 56px;
+    width: min(280px, 88vw);
+    max-height: 108px;
   }
 
   .page-header h1 {
-    font-size: 24px;
+    font-size: 28px;
   }
 
   .card,
