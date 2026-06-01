@@ -3,60 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link id="favicon" rel="icon" type="image/svg+xml" />
-    <link id="favicon-png" rel="alternate icon" type="image/png" />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/logo/mathlogic-favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/src/assets/logo/mathlogic-favicon.png" />
     <title>Central de Cálculos</title>
   </head>
   <body>
-    <div id="aviso" class="aviso" role="alert" aria-live="assertive"></div>
-
     <main class="app-container">
       <header class="page-header">
-        <div class="brand-header">
-          <img id="mathlogic-logo" class="brand-logo" alt="MathLogic" />
-
-          <div class="header-copy">
-            <h1 id="titulo-pagina">Central de Cálculos</h1>
-            <p id="subtitulo-pagina">Escolha uma ferramenta para iniciar.</p>
-          </div>
-        </div>
-
-        <label class="theme-switch" title="Alternar tema escuro">
-          <input
-            id="tema-escuro"
-            class="theme-switch-input"
-            type="checkbox"
-            aria-label="Alternar tema escuro"
-          />
-          <span class="theme-switch-text">Tema</span>
-          <span class="theme-switch-track" aria-hidden="true">
-            <span class="theme-track-icon theme-sun"></span>
-            <span class="theme-track-icon theme-moon"></span>
-            <span class="theme-switch-knob">
-              <span class="knob-icon knob-icon-sun theme-sun"></span>
-              <span class="knob-icon knob-icon-moon theme-moon"></span>
-            </span>
-          </span>
-        </label>
+        <img class="brand-logo" src="/src/assets/logo/mathlogic-logo.png" alt="MathLogic" />
+        <h1 id="titulo-pagina">Central de Cálculos</h1>
+        <p id="subtitulo-pagina">Escolha uma ferramenta para iniciar.</p>
       </header>
 
-      <button
-        id="menu-toggle"
-        class="nav-toggle"
-        type="button"
-        aria-controls="app-nav"
-        aria-expanded="false"
-        aria-label="Abrir menu"
-      >
-        <span class="nav-toggle-label">Menu</span>
-        <span class="nav-toggle-icon" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </span>
-      </button>
-
-      <nav id="app-nav" class="app-nav" aria-label="Navegação principal">
+      <nav class="app-nav" aria-label="Navegação principal">
         <a class="nav-link" href="#home" data-page-link="home">Início</a>
         <a class="nav-link" href="#matrizes" data-page-link="matrizes">Matrizes</a>
         <a class="nav-link" href="#tabela-verdade" data-page-link="tabela-verdade">
@@ -67,56 +26,40 @@
       <section id="home-page" class="app-page" data-page="home">
         <div class="home-grid">
           <article class="home-option">
-            <span class="option-kicker">Matemática Aplicada</span>
+            <span>Matemática aplicada</span>
             <h2>Calculadora de Matrizes</h2>
-            <p>Monte matrizes, valide dimensões e execute operações básicas.</p>
-            <a class="button button-primary option-button" href="#matrizes">Abrir ferramenta</a>
+            <p>Monte matrizes e faça operações básicas entre elas.</p>
+            <a class="button button-primary" href="#matrizes">Abrir ferramenta</a>
           </article>
 
           <article class="home-option">
-            <span class="option-kicker">Lógica matemática</span>
+            <span>Lógica matemática</span>
             <h2>Tabela Verdade</h2>
-            <p>Gere combinações de valores lógicos para proposições compostas.</p>
-            <a class="button button-primary option-button" href="#tabela-verdade">
-              Abrir ferramenta
-            </a>
+            <p>Digite uma proposição lógica e gere a tabela verdade.</p>
+            <a class="button button-primary" href="#tabela-verdade">Abrir ferramenta</a>
           </article>
         </div>
       </section>
 
       <section id="matrizes-page" class="app-page" data-page="matrizes" hidden>
         <section class="card">
-          <div class="card-header">
-            <h2>Dimensões</h2>
-          </div>
+          <h2>Dimensões</h2>
 
           <div class="dimensoes">
-            <fieldset class="dimension-group">
+            <fieldset>
               <legend>Matriz A</legend>
-
-              <div class="field-row">
-                <label for="linhas-a">Linhas</label>
-                <input id="linhas-a" type="number" min="1" value="2" />
-              </div>
-
-              <div class="field-row">
-                <label for="colunas-a">Colunas</label>
-                <input id="colunas-a" type="number" min="1" value="2" />
-              </div>
+              <label for="linhas-a">Linhas</label>
+              <input id="linhas-a" type="number" min="1" value="2" />
+              <label for="colunas-a">Colunas</label>
+              <input id="colunas-a" type="number" min="1" value="2" />
             </fieldset>
 
-            <fieldset class="dimension-group">
+            <fieldset>
               <legend>Matriz B</legend>
-
-              <div class="field-row">
-                <label for="linhas-b">Linhas</label>
-                <input id="linhas-b" type="number" min="1" value="2" />
-              </div>
-
-              <div class="field-row">
-                <label for="colunas-b">Colunas</label>
-                <input id="colunas-b" type="number" min="1" value="2" />
-              </div>
+              <label for="linhas-b">Linhas</label>
+              <input id="linhas-b" type="number" min="1" value="2" />
+              <label for="colunas-b">Colunas</label>
+              <input id="colunas-b" type="number" min="1" value="2" />
             </fieldset>
           </div>
 
@@ -124,17 +67,12 @@
             <button id="gerar-matrizes" class="button button-primary" type="button">
               Gerar matrizes
             </button>
-            <button id="ajuda-matrizes" class="button button-help" type="button">
-              <span class="help-icon" aria-hidden="true">?</span>
-              Ajuda
-            </button>
+            <button id="ajuda-matrizes" class="button button-help" type="button">Ajuda</button>
           </div>
         </section>
 
         <section class="card">
-          <div class="card-header">
-            <h2>Matrizes</h2>
-          </div>
+          <h2>Matrizes</h2>
 
           <div class="matrizes">
             <div class="matrix-panel">
@@ -153,27 +91,13 @@
           </div>
 
           <p id="observacao-dimensoes" class="observacao-dimensoes" aria-live="polite"></p>
-          <div id="acoes-observacao-matrizes" class="context-help-actions" hidden>
-            <button
-              id="saber-mais-observacao-matrizes"
-              class="button button-help"
-              type="button"
-            >
-              <span class="help-icon" aria-hidden="true">?</span>
-              Saiba mais
-            </button>
-          </div>
         </section>
 
         <section class="card">
-          <div class="card-header">
-            <h2>Operações</h2>
-          </div>
+          <h2>Operações</h2>
 
-          <div class="field-row scalar-field">
-            <label for="escalar">Escalar (k)</label>
-            <input id="escalar" type="number" value="1" />
-          </div>
+          <label for="escalar">Escalar (k)</label>
+          <input id="escalar" class="input-menor" type="number" value="1" />
 
           <div class="botoes">
             <button id="somar" class="button button-action" type="button">Somar</button>
@@ -188,19 +112,14 @@
           </div>
         </section>
 
-        <section id="resultado-matrizes-card" class="card result-card" hidden>
-          <div class="card-header">
-            <h2>Resultado</h2>
-          </div>
-
+        <section id="resultado-matrizes-card" class="card" hidden>
+          <h2>Resultado</h2>
           <p id="mensagem-erro" class="erro"></p>
-          <div id="acoes-erro-matrizes" class="context-help-actions" hidden>
-            <button id="saber-mais-erro-matrizes" class="button button-help" type="button">
-              <span class="help-icon" aria-hidden="true">?</span>
-              Saiba mais
+          <div id="ajuda-erro-matrizes" class="botoes erro-acoes" hidden>
+            <button id="abrir-ajuda-erro-matrizes" class="button button-help" type="button">
+              Ajuda
             </button>
           </div>
-
           <div class="matrix-scroll">
             <div id="resultado"></div>
           </div>
@@ -209,61 +128,40 @@
 
       <section id="tabela-verdade-page" class="app-page" data-page="tabela-verdade" hidden>
         <section class="card">
-          <div class="card-header">
-            <h2>Proposição lógica</h2>
-          </div>
+          <h2>Proposição lógica</h2>
 
-          <div class="truth-form">
-            <div class="field-row proposition-field">
-              <label for="proposicao-logica">Proposição</label>
-              <input
-                id="proposicao-logica"
-                type="text"
-                placeholder="Ex.: (p ^ q) -> ~r"
-                autocomplete="off"
-              />
-              <p class="field-help">
-                Você pode digitar símbolos ou frases como "p e q", "não p", "p ou q" e
-                "p implica q".
-              </p>
-            </div>
+          <label for="proposicao-logica">Proposição</label>
+          <input
+            id="proposicao-logica"
+            type="text"
+            placeholder="Ex.: (p ^ q) -> ~r"
+            autocomplete="off"
+          />
+          <p class="field-help">Exemplos: p e q, não p, p ou q, p implica q.</p>
 
-            <div class="botoes">
-              <button id="gerar-tabela" class="button button-primary" type="button">
-                Gerar tabela
-              </button>
-              <button id="limpar-tabela" class="button button-danger" type="button">Limpar</button>
-              <button id="ajuda-tabela" class="button button-help" type="button">
-                <span class="help-icon" aria-hidden="true">?</span>
-                Ajuda
-              </button>
-            </div>
+          <div class="botoes">
+            <button id="gerar-tabela" class="button button-primary" type="button">
+              Gerar tabela
+            </button>
+            <button id="limpar-tabela" class="button button-danger" type="button">Limpar</button>
+            <button id="ajuda-tabela" class="button button-help" type="button">Ajuda</button>
           </div>
         </section>
 
-        <section id="resultado-tabela-card" class="card result-card" hidden>
-          <div class="card-header">
-            <h2>Resultado</h2>
-          </div>
-
+        <section id="resultado-tabela-card" class="card" hidden>
+          <h2>Resultado</h2>
           <p id="mensagem-tabela" class="erro"></p>
-          <div id="acoes-erro-tabela" class="context-help-actions" hidden>
-            <button id="saber-mais-erro-tabela" class="button button-help" type="button">
-              <span class="help-icon" aria-hidden="true">?</span>
-              Saiba mais
-            </button>
-          </div>
 
           <div id="resumo-tabela" class="truth-summary" hidden>
-            <div class="summary-item">
+            <div>
               <span>Linhas</span>
               <strong id="total-linhas-tabela">0</strong>
             </div>
-            <div class="summary-item">
+            <div>
               <span>Colunas</span>
               <strong id="total-colunas-tabela">0</strong>
             </div>
-            <div class="summary-item">
+            <div>
               <span>Variáveis</span>
               <strong id="variaveis-tabela">0</strong>
             </div>
@@ -276,54 +174,132 @@
       </section>
     </main>
 
-    <div
-      id="ajuda-matrizes-modal"
-      class="modal-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="ajuda-matrizes-titulo"
-      hidden
-    >
+    <div id="ajuda-matrizes-modal" class="modal-overlay" role="dialog" aria-modal="true" hidden>
       <div class="modal-panel">
         <div class="modal-header">
-          <div>
-            <h2 id="ajuda-matrizes-titulo">Ajuda da Calculadora de Matrizes</h2>
-            <p id="ajuda-matrizes-subtitulo">Entenda as regras de cada operação.</p>
-          </div>
-          <button
-            id="fechar-ajuda-matrizes"
-            class="modal-close"
-            type="button"
-            aria-label="Fechar ajuda das matrizes"
-          >
-            ×
-          </button>
+          <h2>Ajuda da Calculadora de Matrizes</h2>
+          <button id="fechar-ajuda-matrizes" class="modal-close" type="button">×</button>
         </div>
 
-        <div id="ajuda-matrizes-conteudo" class="matrix-help-content"></div>
+        <div class="help-content">
+          <p>
+            Uma matriz é uma tabela de números organizada em linhas e colunas. A dimensão 2x3,
+            por exemplo, significa 2 linhas e 3 colunas.
+          </p>
+
+          <section class="help-notes">
+            <h3>Regras das operações</h3>
+            <div class="matrix-scroll help-table-scroll">
+              <table class="help-table matrix-info-table">
+                <thead>
+                  <tr>
+                    <th>Tema</th>
+                    <th>Regra</th>
+                    <th>Como calcula</th>
+                    <th>Exemplo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Dimensão</td>
+                    <td>É escrita como linhas × colunas.</td>
+                    <td>Define quantas posições a matriz possui.</td>
+                    <td><strong>2x3</strong> tem 2 linhas e 3 colunas.</td>
+                  </tr>
+                  <tr>
+                    <td>Soma</td>
+                    <td>A e B precisam ter a mesma dimensão.</td>
+                    <td>Soma cada posição correspondente: aij + bij.</td>
+                    <td><strong>2x3 + 2x3</strong> gera uma matriz 2x3.</td>
+                  </tr>
+                  <tr>
+                    <td>Subtração</td>
+                    <td>Usa a mesma regra da soma.</td>
+                    <td>Subtrai cada posição correspondente: aij - bij.</td>
+                    <td><strong>3x1 - 3x1</strong> gera uma matriz 3x1.</td>
+                  </tr>
+                  <tr>
+                    <td>Escalar</td>
+                    <td>Funciona para qualquer matriz válida.</td>
+                    <td>Multiplica todos os elementos pelo número k.</td>
+                    <td><strong>k = 2</strong> transforma 1, 3 em 2, 6.</td>
+                  </tr>
+                  <tr>
+                    <td>A × B</td>
+                    <td>As colunas de A devem ser iguais às linhas de B.</td>
+                    <td>Cada célula combina uma linha de A com uma coluna de B.</td>
+                    <td><strong>2x3 × 3x4</strong> gera uma matriz 2x4.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="help-notes">
+            <h3>Exemplos rápidos</h3>
+            <div class="matrix-scroll help-table-scroll">
+              <table class="help-table matrix-info-table">
+                <thead>
+                  <tr>
+                    <th>Operação</th>
+                    <th>Exemplo</th>
+                    <th>Status</th>
+                    <th>Por quê</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Soma</td>
+                    <td>2x2 + 2x2</td>
+                    <td>Possível</td>
+                    <td>As duas matrizes têm exatamente o mesmo tamanho.</td>
+                  </tr>
+                  <tr>
+                    <td>Soma</td>
+                    <td>2x3 + 3x2</td>
+                    <td>Impossível</td>
+                    <td>As quantidades de linhas e colunas não coincidem.</td>
+                  </tr>
+                  <tr>
+                    <td>Subtração</td>
+                    <td>4x1 - 4x1</td>
+                    <td>Possível</td>
+                    <td>Cada elemento tem uma posição correspondente.</td>
+                  </tr>
+                  <tr>
+                    <td>Escalar</td>
+                    <td>5 × matriz 3x2</td>
+                    <td>Possível</td>
+                    <td>O número multiplica todos os elementos da matriz.</td>
+                  </tr>
+                  <tr>
+                    <td>A × B</td>
+                    <td>2x3 × 3x2</td>
+                    <td>Possível</td>
+                    <td>As 3 colunas de A combinam com as 3 linhas de B.</td>
+                  </tr>
+                  <tr>
+                    <td>A × B</td>
+                    <td>2x3 × 2x2</td>
+                    <td>Impossível</td>
+                    <td>As 3 colunas de A não combinam com as 2 linhas de B.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
 
-    <div
-      id="ajuda-modal"
-      class="modal-overlay"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="ajuda-titulo"
-      hidden
-    >
+    <div id="ajuda-modal" class="modal-overlay" role="dialog" aria-modal="true" hidden>
       <div class="modal-panel">
         <div class="modal-header">
-          <div>
-            <h2 id="ajuda-titulo">Ajuda da Tabela Verdade</h2>
-            <p>Use símbolos matemáticos ou escreva de forma mais natural.</p>
-          </div>
-          <button id="fechar-ajuda" class="modal-close" type="button" aria-label="Fechar ajuda">
-            ×
-          </button>
+          <h2>Ajuda da Tabela Verdade</h2>
+          <button id="fechar-ajuda" class="modal-close" type="button">×</button>
         </div>
 
-        <div id="ajuda-tabela-conteudo" class="truth-help-content">
+        <div class="help-content">
           <div class="matrix-scroll help-table-scroll">
             <table class="help-table">
               <thead>

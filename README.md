@@ -1,33 +1,21 @@
-# Calculadora de Matrizes
+# Calculadora de Matrizes e Tabela Verdade
 
-Projeto web simples feito com HTML, CSS e JavaScript puro usando Vite e Yarn.
+Projeto simples feito com HTML, CSS, JavaScript e Vite.
 
 ## Funcionalidades
 
-- Soma de matrizes
-- Subtração de matrizes
+- Calculadora de matrizes
+- Soma e subtração de matrizes
 - Multiplicação por escalar
 - Multiplicação entre matrizes
-- Validação de dimensões
-- Pop-ups de sucesso e erro
+- Tabela verdade para proposições lógicas
+- Navegação entre início, matrizes e tabela verdade
 
-## Requisitos
-
-- Node.js instalado
-- Yarn instalado
-
-## Como rodar o projeto
-
-Instale as dependências:
+## Como rodar
 
 ```bash
-yarn install
-```
-
-Inicie o servidor de desenvolvimento:
-
-```bash
-yarn dev
+npm install
+npm run dev
 ```
 
 Abra no navegador:
@@ -36,18 +24,8 @@ Abra no navegador:
 http://localhost:5173/
 ```
 
-## Gerar versão de produção
+Para gerar a versão final:
 
 ```bash
-yarn build
+npm run build
 ```
-
-Os arquivos finais serão gerados na pasta `dist`.
-
-## Tecnologias
-
-- HTML
-- CSS
-- JavaScript
-- Vite
-- Yarn
