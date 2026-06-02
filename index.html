@@ -251,37 +251,37 @@
                   <tr>
                     <td>Soma</td>
                     <td>2x2 + 2x2</td>
-                    <td>Possível</td>
+                    <td><span class="help-status help-status-ok">Possível</span></td>
                     <td>As duas matrizes têm exatamente o mesmo tamanho.</td>
                   </tr>
                   <tr>
                     <td>Soma</td>
                     <td>2x3 + 3x2</td>
-                    <td>Impossível</td>
+                    <td><span class="help-status help-status-bad">Impossível</span></td>
                     <td>As quantidades de linhas e colunas não coincidem.</td>
                   </tr>
                   <tr>
                     <td>Subtração</td>
                     <td>4x1 - 4x1</td>
-                    <td>Possível</td>
+                    <td><span class="help-status help-status-ok">Possível</span></td>
                     <td>Cada elemento tem uma posição correspondente.</td>
                   </tr>
                   <tr>
                     <td>Escalar</td>
                     <td>5 × matriz 3x2</td>
-                    <td>Possível</td>
+                    <td><span class="help-status help-status-ok">Possível</span></td>
                     <td>O número multiplica todos os elementos da matriz.</td>
                   </tr>
                   <tr>
                     <td>A × B</td>
                     <td>2x3 × 3x2</td>
-                    <td>Possível</td>
+                    <td><span class="help-status help-status-ok">Possível</span></td>
                     <td>As 3 colunas de A combinam com as 3 linhas de B.</td>
                   </tr>
                   <tr>
                     <td>A × B</td>
                     <td>2x3 × 2x2</td>
-                    <td>Impossível</td>
+                    <td><span class="help-status help-status-bad">Impossível</span></td>
                     <td>As 3 colunas de A não combinam com as 2 linhas de B.</td>
                   </tr>
                 </tbody>
@@ -300,71 +300,153 @@
         </div>
 
         <div class="help-content">
-          <div class="matrix-scroll help-table-scroll">
-            <table class="help-table">
-              <thead>
-                <tr>
-                  <th>Conectivo</th>
-                  <th>Símbolo</th>
-                  <th>Operação Lógica</th>
-                  <th>Valor Lógico</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>não</td>
-                  <td>~</td>
-                  <td>negação</td>
-                  <td>terá valor falso quando a proposição for verdadeira e vice-versa.</td>
-                </tr>
-                <tr>
-                  <td>e</td>
-                  <td>^</td>
-                  <td>conjunção</td>
-                  <td>será verdadeira somente quando todas as proposições forem verdadeiras.</td>
-                </tr>
-                <tr>
-                  <td>ou</td>
-                  <td>v</td>
-                  <td>disjunção</td>
-                  <td>será verdadeira quando pelo menos uma das proposições for verdadeira.</td>
-                </tr>
-                <tr>
-                  <td>se...então</td>
-                  <td>→</td>
-                  <td>condicional</td>
-                  <td>
-                    será falsa quando a proposição antecedente for verdadeira e a consequente for
-                    falsa.
-                  </td>
-                </tr>
-                <tr>
-                  <td>...se somente se...</td>
-                  <td>↔</td>
-                  <td>bicondicional</td>
-                  <td>
-                    será verdadeira quando ambas as proposições forem verdadeiras ou ambas falsas.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="help-notes">
-            <h3>Como montar proposições</h3>
+          <section class="help-notes help-intro">
+            <h3>Ideia principal</h3>
             <p>
-              Use variáveis como p, q, r e s. Parênteses ajudam a deixar clara a ordem das
-              operações, principalmente em proposições compostas.
+              A tabela verdade testa todas as combinações possíveis de V e F. Para ficar mais fácil
+              acompanhar, o resultado não pula direto para a resposta: ele cria uma coluna para cada
+              parte calculada da proposição.
+            </p>
+          </section>
+
+          <section class="help-notes">
+            <h3>Ordem de montagem</h3>
+            <div class="matrix-scroll help-table-scroll">
+              <table class="help-table truth-help-table">
+                <thead>
+                  <tr>
+                    <th>Ordem</th>
+                    <th>O que aparece</th>
+                    <th>Por que aparece</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>1</strong></td>
+                    <td>Variáveis, como <strong>p, q, r</strong></td>
+                    <td>São os valores de entrada que podem ser V ou F.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>2</strong></td>
+                    <td>Partes dentro de parênteses</td>
+                    <td>Parênteses indicam o que deve ser resolvido primeiro.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>3</strong></td>
+                    <td><strong>~</strong>, depois <strong>^</strong>, depois <strong>v</strong></td>
+                    <td>A tabela calcula primeiro negação, depois e, depois ou.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>4</strong></td>
+                    <td><strong>-></strong> e <strong>&lt;-></strong></td>
+                    <td>Implicação e bicondicional normalmente fecham a proposição composta.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>5</strong></td>
+                    <td>Expressão completa</td>
+                    <td>É a última coluna e representa o resultado final.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="help-notes">
+            <h3>Conectivos</h3>
+            <div class="matrix-scroll help-table-scroll">
+              <table class="help-table logic-help-table">
+                <thead>
+                  <tr>
+                    <th>Use</th>
+                    <th>Leia como</th>
+                    <th>Quando dá V</th>
+                    <th>Quando dá F</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong>~p</strong></td>
+                    <td>não p</td>
+                    <td>Quando p é F.</td>
+                    <td>Quando p é V.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>p ^ q</strong></td>
+                    <td>p e q</td>
+                    <td>Quando p e q são V.</td>
+                    <td>Quando pelo menos um lado é F.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>p v q</strong></td>
+                    <td>p ou q</td>
+                    <td>Quando pelo menos um lado é V.</td>
+                    <td>Quando os dois lados são F.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>p -> q</strong></td>
+                    <td>se p, então q</td>
+                    <td>Em todos os casos, menos V -> F.</td>
+                    <td>Somente quando p é V e q é F.</td>
+                  </tr>
+                  <tr>
+                    <td><strong>p &lt;-> q</strong></td>
+                    <td>p se e somente se q</td>
+                    <td>Quando p e q têm o mesmo valor.</td>
+                    <td>Quando p e q têm valores diferentes.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="help-notes">
+            <h3>Exemplo resolvido</h3>
+            <p>Entrada: <strong>p ^ q -> r</strong></p>
+            <div class="matrix-scroll help-table-scroll">
+              <table class="help-table truth-help-table">
+                <thead>
+                  <tr>
+                    <th>Passo</th>
+                    <th>Coluna criada</th>
+                    <th>Motivo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Variáveis</td>
+                    <td><strong>p, q, r</strong></td>
+                    <td>São os valores que a tabela precisa combinar.</td>
+                  </tr>
+                  <tr>
+                    <td>Passo 1</td>
+                    <td><strong>p ^ q</strong></td>
+                    <td>Antes da implicação, é preciso saber o valor de p e q juntos.</td>
+                  </tr>
+                  <tr>
+                    <td>Passo 2 - resultado</td>
+                    <td><strong>p ^ q -> r</strong></td>
+                    <td>Agora a tabela usa o valor de p ^ q para testar se ele implica r.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="help-notes">
+            <h3>Como escrever proposições</h3>
+            <p>
+              Use variáveis de uma letra, como p, q, r e s. Parênteses ajudam a deixar clara a
+              ordem, principalmente quando a proposição tem várias operações.
             </p>
             <div class="help-examples">
-              <span>(p ^ q) → r</span>
+              <span>(p ^ q) -> r</span>
               <span>~p v q</span>
               <span>p e q</span>
               <span>se p então q</span>
               <span>p implica q</span>
               <span>p se e somente se q</span>
             </div>
-          </div>
+          </section>
         </div>
       </div>
     </div>

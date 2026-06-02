@@ -352,14 +352,130 @@ input:focus {
   font-size: 18px;
 }
 
+.truth-explanation {
+  display: grid;
+  gap: 14px;
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+}
+
+.truth-explanation h3,
+.truth-explanation h4 {
+  margin: 0;
+  color: var(--heading);
+}
+
+.truth-explanation h3 {
+  font-size: 18px;
+}
+
+.truth-explanation h4 {
+  font-size: 14px;
+}
+
+.truth-explanation p,
+.truth-reason-list span {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.truth-reason-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.truth-reason-grid div {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+}
+
+.truth-reason-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.truth-reason-list li {
+  display: grid;
+  gap: 5px;
+  padding: 10px 12px;
+  border-left: 3px solid var(--primary);
+  border-radius: 6px;
+  background: var(--input-bg);
+}
+
+.truth-reason-list strong {
+  color: var(--heading);
+}
+
+.truth-steps {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel-bg);
+}
+
+.truth-steps h3 {
+  margin: 0;
+  color: var(--heading);
+  font-size: 18px;
+}
+
+.truth-steps ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.truth-steps li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--input-bg);
+}
+
+.truth-steps span,
+.truth-step-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.truth-steps strong {
+  color: var(--heading);
+}
+
 .truth-table,
 .help-table {
   width: 100%;
   min-width: 520px;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--input-bg);
 }
 
 .truth-table th,
@@ -375,6 +491,115 @@ input:focus {
 .help-table th {
   background: var(--panel-bg);
   color: var(--heading);
+}
+
+.help-table-scroll {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--input-bg);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.help-table {
+  border: 0;
+  border-radius: 0;
+}
+
+.help-table th {
+  padding: 12px 14px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background:
+    linear-gradient(180deg, rgba(96, 165, 250, 0.16), rgba(45, 212, 191, 0.07)),
+    var(--panel-bg);
+  color: var(--heading);
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.help-table td {
+  border-right: 1px solid rgba(58, 65, 74, 0.74);
+  background: rgba(255, 255, 255, 0.012);
+  line-height: 1.45;
+}
+
+.help-table th:last-child,
+.help-table td:last-child {
+  border-right: 0;
+}
+
+.help-table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.032);
+}
+
+.help-table tbody tr:hover td {
+  background: rgba(45, 212, 191, 0.08);
+}
+
+.help-table td:first-child {
+  background: rgba(96, 165, 250, 0.07);
+  box-shadow: inset 3px 0 0 rgba(96, 165, 250, 0.62);
+}
+
+.help-table td strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 3px 8px;
+  border: 1px solid rgba(96, 165, 250, 0.28);
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.12);
+  color: var(--heading);
+  font-weight: 700;
+}
+
+.help-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 26px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.help-status-ok {
+  border: 1px solid rgba(108, 233, 166, 0.42);
+  background: rgba(108, 233, 166, 0.12);
+  color: var(--success);
+}
+
+.help-status-bad {
+  border: 1px solid rgba(249, 112, 102, 0.42);
+  background: rgba(249, 112, 102, 0.12);
+  color: var(--danger);
+}
+
+.truth-step-column,
+.truth-final-column {
+  min-width: 128px;
+}
+
+.truth-final-column {
+  box-shadow: inset 0 -3px 0 var(--primary);
+}
+
+.truth-final-cell {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.truth-table th strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--heading);
+  overflow-wrap: anywhere;
+}
+
+.truth-step-label {
+  display: block;
 }
 
 .matrix-info-table {
@@ -395,6 +620,32 @@ input:focus {
 .matrix-info-table strong {
   color: var(--heading);
   font-weight: 700;
+}
+
+.logic-help-table,
+.truth-help-table {
+  min-width: 680px;
+}
+
+.logic-help-table th,
+.logic-help-table td,
+.truth-help-table th,
+.truth-help-table td {
+  text-align: left;
+  vertical-align: top;
+}
+
+.logic-help-table th:first-child,
+.logic-help-table td:first-child,
+.truth-help-table th:first-child,
+.truth-help-table td:first-child {
+  width: 140px;
+  text-align: center;
+}
+
+.logic-help-table strong,
+.truth-help-table strong {
+  color: var(--heading);
 }
 
 .truth-table tr:last-child td,
@@ -423,7 +674,7 @@ input:focus {
 }
 
 .modal-panel {
-  width: min(760px, 100%);
+  width: min(920px, 100%);
   max-height: min(720px, 90vh);
   overflow: auto;
   padding: 24px;
@@ -467,19 +718,47 @@ input:focus {
   line-height: 1.5;
 }
 
+.help-content p strong {
+  color: var(--heading);
+}
+
 .help-notes {
   display: grid;
   gap: 12px;
   padding: 16px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  background: var(--panel-bg);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)),
+    var(--panel-bg);
 }
 
 .help-notes h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   color: var(--heading);
   font-size: 18px;
+}
+
+.help-notes h3::before {
+  content: "";
+  width: 6px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.help-intro {
+  border-color: rgba(45, 212, 191, 0.42);
+  background:
+    linear-gradient(135deg, rgba(45, 212, 191, 0.11), rgba(96, 165, 250, 0.05)),
+    var(--panel-bg);
+}
+
+.help-intro h3::before {
+  background: var(--action);
 }
 
 .help-examples {
@@ -506,7 +785,8 @@ input:focus {
   .home-grid,
   .dimensoes,
   .matrizes,
-  .truth-summary {
+  .truth-summary,
+  .truth-reason-grid {
     grid-template-columns: 1fr;
   }
 
@@ -530,5 +810,10 @@ input:focus {
   .help-examples span {
     max-width: 100%;
     overflow-wrap: anywhere;
+  }
+
+  .truth-steps ol,
+  .truth-steps li {
+    display: grid;
   }
 }

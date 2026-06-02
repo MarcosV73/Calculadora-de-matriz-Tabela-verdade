@@ -333,15 +333,17 @@ function obterAjudaErroMatriz(tipo) {
 
 function montarTabelaAjudaErro(ajuda) {
   const linhas = ajuda.tabela
-    .map(
-      (linha) => `
+    .map((linha) => {
+      const classeStatus = linha[1] === 'Possível' ? 'help-status-ok' : 'help-status-bad'
+
+      return `
         <tr>
           <td>${linha[0]}</td>
-          <td>${linha[1]}</td>
+          <td><span class="help-status ${classeStatus}">${linha[1]}</span></td>
           <td>${linha[2]}</td>
         </tr>
-      `,
-    )
+      `
+    })
     .join('')
 
   return `
@@ -744,6 +746,91 @@ function avaliar(no, valores) {
   return esquerda === direita
 }
 
+const simbolosOperadores = {
+  e: '^',
+  ou: 'v',
+  condicional: '->',
+  bicondicional: '<->',
+}
+
+const precedenciaOperadores = {
+  bicondicional: 1,
+  condicional: 2,
+  ou: 3,
+  e: 4,
+  negacao: 5,
+  variavel: 6,
+}
+
+function precisaParenteses(no, pai, lado) {
+  if (!pai) {
+    return false
+  }
+
+  const precedenciaNo = precedenciaOperadores[no.tipo]
+  const precedenciaPai = precedenciaOperadores[pai.tipo]
+
+  if (precedenciaNo < precedenciaPai) {
+    return true
+  }
+
+  if (precedenciaNo > precedenciaPai) {
+    return false
+  }
+
+  return pai.tipo === 'condicional' && lado === 'esquerda'
+}
+
+function formatarExpressao(no, pai = null, lado = null) {
+  if (no.tipo === 'variavel') {
+    return no.nome
+  }
+
+  let texto
+
+  if (no.tipo === 'negacao') {
+    const textoNegado = formatarExpressao(no.valor)
+    texto =
+      no.valor.tipo === 'variavel' || no.valor.tipo === 'negacao'
+        ? `~${textoNegado}`
+        : `~(${textoNegado})`
+  } else {
+    const esquerda = formatarExpressao(no.esquerda, no, 'esquerda')
+    const direita = formatarExpressao(no.direita, no, 'direita')
+    texto = `${esquerda} ${simbolosOperadores[no.tipo]} ${direita}`
+  }
+
+  return precisaParenteses(no, pai, lado) ? `(${texto})` : texto
+}
+
+function coletarEtapasProposicao(arvore) {
+  const etapas = []
+  const expressoesAdicionadas = new Set()
+
+  function visitar(no) {
+    if (no.tipo === 'variavel') {
+      return
+    }
+
+    if (no.tipo === 'negacao') {
+      visitar(no.valor)
+    } else {
+      visitar(no.esquerda)
+      visitar(no.direita)
+    }
+
+    const expressao = formatarExpressao(no)
+
+    if (!expressoesAdicionadas.has(expressao)) {
+      expressoesAdicionadas.add(expressao)
+      etapas.push({ expressao, no })
+    }
+  }
+
+  visitar(arvore)
+  return etapas
+}
+
 function gerarCombinacoes(variaveis) {
   const linhas = []
   const total = 2 ** variaveis.length
@@ -775,13 +862,16 @@ function criarCelulaLogica(valor) {
 
 function gerarTabelaVerdade(texto) {
   const analise = analisarProposicao(texto)
+  const etapas = coletarEtapasProposicao(analise.arvore)
   const linhas = gerarCombinacoes(analise.variaveis).map((valores) => ({
     valores,
     resultado: avaliar(analise.arvore, valores),
+    etapas: etapas.map((etapa) => avaliar(etapa.no, valores)),
   }))
 
   return {
     ...analise,
+    etapas,
     linhas,
   }
 }
@@ -812,13 +902,165 @@ function mostrarErroTabela(mensagem) {
   }, TEMPO_ERRO)
 }
 
+function textoRotuloEtapa(indice, totalEtapas) {
+  const passo = `Passo ${indice + 1}`
+  return indice === totalEtapas - 1 ? `${passo} - resultado` : passo
+}
+
+function descreverEtapa(etapa) {
+  const { no } = etapa
+
+  if (no.tipo === 'negacao') {
+    return `Essa coluna aparece porque é preciso inverter o valor de ${formatarExpressao(no.valor)} antes de usar esse resultado.`
+  }
+
+  const esquerda = formatarExpressao(no.esquerda)
+  const direita = formatarExpressao(no.direita)
+
+  if (no.tipo === 'e') {
+    return `Essa coluna aparece porque ${esquerda} ^ ${direita} só fica V quando os dois lados são V.`
+  }
+
+  if (no.tipo === 'ou') {
+    return `Essa coluna aparece porque ${esquerda} v ${direita} fica V quando pelo menos um dos lados é V.`
+  }
+
+  if (no.tipo === 'condicional') {
+    return `Essa coluna aparece porque a implicação usa ${esquerda} como condição e ${direita} como consequência; ela só fica F quando a condição é V e a consequência é F.`
+  }
+
+  return `Essa coluna aparece porque o bicondicional compara ${esquerda} e ${direita}; ele fica V quando os dois lados têm o mesmo valor.`
+}
+
+function criarItemExplicacao(titulo, texto) {
+  const item = document.createElement('div')
+  const subtitulo = document.createElement('h4')
+  const paragrafo = document.createElement('p')
+
+  subtitulo.textContent = titulo
+  paragrafo.textContent = texto
+
+  item.appendChild(subtitulo)
+  item.appendChild(paragrafo)
+
+  return item
+}
+
+function renderizarExplicacaoTabela(tabela) {
+  const explicacao = document.createElement('section')
+  const titulo = document.createElement('h3')
+  const introducao = document.createElement('p')
+  const resumo = document.createElement('div')
+  const quantidadeVariaveis = tabela.variaveis.length
+  const textoQuantidadeVariaveis =
+    quantidadeVariaveis === 1 ? '1 variável' : `${quantidadeVariaveis} variáveis`
+
+  explicacao.className = 'truth-explanation'
+  resumo.className = 'truth-reason-grid'
+  titulo.textContent = 'Por que esta tabela foi montada assim'
+  introducao.textContent = `A proposição foi lida como ${formatarExpressao(tabela.arvore)}. A tabela mostra primeiro os valores de entrada e depois cada parte calculada da expressão.`
+
+  resumo.appendChild(
+    criarItemExplicacao(
+      '1. Variáveis',
+      `As colunas ${juntarLista(tabela.variaveis)} vêm primeiro porque são os valores que podem mudar na proposição.`,
+    ),
+  )
+  resumo.appendChild(
+    criarItemExplicacao(
+      '2. Linhas',
+      `Com ${textoQuantidadeVariaveis}, existem 2^${quantidadeVariaveis} = ${tabela.linhas.length} combinações de V e F para testar.`,
+    ),
+  )
+  resumo.appendChild(
+    criarItemExplicacao(
+      '3. Colunas de cálculo',
+      tabela.etapas.length > 0
+        ? 'Cada coluna seguinte resolve uma parte da proposição, da menor parte até o resultado final.'
+        : 'Como a proposição tem só uma variável, a própria coluna da variável já mostra o resultado.',
+    ),
+  )
+
+  explicacao.appendChild(titulo)
+  explicacao.appendChild(introducao)
+  explicacao.appendChild(resumo)
+
+  if (tabela.etapas.length > 0) {
+    const lista = document.createElement('ol')
+    lista.className = 'truth-reason-list'
+
+    tabela.etapas.forEach((etapa, indice) => {
+      const item = document.createElement('li')
+      const subtitulo = document.createElement('strong')
+      const texto = document.createElement('span')
+
+      subtitulo.textContent = `${textoRotuloEtapa(indice, tabela.etapas.length)}: ${etapa.expressao}`
+      texto.textContent = descreverEtapa(etapa)
+
+      item.appendChild(subtitulo)
+      item.appendChild(texto)
+      lista.appendChild(item)
+    })
+
+    explicacao.appendChild(lista)
+  }
+
+  tabelaVerdadeResultado.appendChild(explicacao)
+}
+
+function renderizarPassosTabela(tabela) {
+  if (tabela.etapas.length === 0) {
+    return
+  }
+
+  const passos = document.createElement('section')
+  const titulo = document.createElement('h3')
+  const lista = document.createElement('ol')
+
+  passos.className = 'truth-steps'
+  titulo.textContent = 'Ordem dos cálculos'
+
+  tabela.etapas.forEach((etapa, indice) => {
+    const item = document.createElement('li')
+    const rotulo = document.createElement('span')
+    const expressao = document.createElement('strong')
+
+    rotulo.textContent = textoRotuloEtapa(indice, tabela.etapas.length)
+    expressao.textContent = etapa.expressao
+
+    item.appendChild(rotulo)
+    item.appendChild(expressao)
+    lista.appendChild(item)
+  })
+
+  passos.appendChild(titulo)
+  passos.appendChild(lista)
+  tabelaVerdadeResultado.appendChild(passos)
+}
+
+function criarCabecalhoEtapa(etapa, indice, totalEtapas) {
+  const coluna = document.createElement('th')
+  const rotulo = document.createElement('span')
+  const expressao = document.createElement('strong')
+
+  coluna.className = indice === totalEtapas - 1 ? 'truth-final-column' : 'truth-step-column'
+  rotulo.className = 'truth-step-label'
+  rotulo.textContent = textoRotuloEtapa(indice, totalEtapas)
+  expressao.textContent = etapa.expressao
+
+  coluna.appendChild(rotulo)
+  coluna.appendChild(expressao)
+
+  return coluna
+}
+
 function renderizarTabelaVerdade(tabela) {
   limparErroTabela()
   tabelaVerdadeResultado.innerHTML = ''
   resultadoTabelaCard.hidden = false
   resumoTabela.hidden = false
   totalLinhasTabela.textContent = tabela.linhas.length
-  totalColunasTabela.textContent = tabela.variaveis.length + 1
+  totalColunasTabela.textContent = tabela.variaveis.length + tabela.etapas.length
   variaveisTabela.textContent = tabela.variaveis.join(', ')
 
   const elementoTabela = document.createElement('table')
@@ -834,9 +1076,10 @@ function renderizarTabelaVerdade(tabela) {
     linhaCabecalho.appendChild(coluna)
   })
 
-  const colunaResultado = document.createElement('th')
-  colunaResultado.textContent = tabela.normalizada
-  linhaCabecalho.appendChild(colunaResultado)
+  tabela.etapas.forEach((etapa, indice) => {
+    linhaCabecalho.appendChild(criarCabecalhoEtapa(etapa, indice, tabela.etapas.length))
+  })
+
   cabecalho.appendChild(linhaCabecalho)
 
   tabela.linhas.forEach((linhaTabela) => {
@@ -846,12 +1089,23 @@ function renderizarTabelaVerdade(tabela) {
       linha.appendChild(criarCelulaLogica(linhaTabela.valores[variavel]))
     })
 
-    linha.appendChild(criarCelulaLogica(linhaTabela.resultado))
+    linhaTabela.etapas.forEach((valor, indice) => {
+      const celula = criarCelulaLogica(valor)
+
+      if (indice === linhaTabela.etapas.length - 1) {
+        celula.classList.add('truth-final-cell')
+      }
+
+      linha.appendChild(celula)
+    })
+
     corpo.appendChild(linha)
   })
 
   elementoTabela.appendChild(cabecalho)
   elementoTabela.appendChild(corpo)
+  renderizarExplicacaoTabela(tabela)
+  renderizarPassosTabela(tabela)
   tabelaVerdadeResultado.appendChild(elementoTabela)
 }
 
